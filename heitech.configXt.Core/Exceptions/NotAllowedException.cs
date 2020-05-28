@@ -7,8 +7,8 @@ namespace heitech.configXt.Core.Exceptions
     public class NotAllowedException : Exception
     {
         public IEnumerable<string> NotMetClaims { get; set; }
-        public CommandTypes Type { get; set; }
-        public NotAllowedException(CommandTypes type, List<string> notMetClaims, string message)
+        public string Type { get; set; }
+        public NotAllowedException(string type, List<string> notMetClaims, string message)
             : this(message)
         {
             Type = type;

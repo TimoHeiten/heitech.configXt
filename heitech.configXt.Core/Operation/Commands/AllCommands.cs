@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using heitech.configXt.Core.Entities;
 using heitech.configXt.Core.Operation;
@@ -9,84 +8,34 @@ namespace heitech.configXt.Core.Commands
 {
     internal static class AllCommands
     {
-        private static async Task<ConfigEntity> GetConfigEntityAsync(CommandContext context)
-        {
-            var storage = context.StorageEngine;
-
-            var entity = await storage.GetEntityByNameAsync<ConfigEntity>(context.ChangeRequest.Name);
-            if (entity == null)
-            {
-                SanityChecks.NotFound(context.ChangeRequest.Name, $"{nameof(AllCommands)}.{nameof(GetConfigEntityAsync)}");
-            }
-            return entity;
-        }
-
-        private static async Task<AdministratorEntity> GetAdminEntityAsync(CommandContext context)
-        {
-            var storage = context.StorageEngine;
-
-            var admin = await storage.GetEntityByNameAsync<AdministratorEntity>(context.AdminName);
-            if (admin == null)
-            {
-                SanityChecks.NotFound(context.AdminName, $"{nameof(AllCommands)}.{nameof(GetAdminEntityAsync)}");
-            }
-            return admin;
-        }
-
-        private static bool IsAllowed(ConfigEntity entity, AdministratorEntity administrator)
-        {
-            bool guard = entity.NecessaryClaims.Count > administrator.Claims.Count;
-            if (guard)
-                return false;
-
-            // all necessary claims need to be held by the administrator, but admin can have more
-            foreach (var claim in entity.NecessaryClaims)
-            {
-                if (administrator.Claims.Any(x => string.Equals(x.Value, claim.Value, StringComparison.InvariantCultureIgnoreCase)) == false)
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
+       
         private static ConfigEntity GenerateConfigEntityFromChangeRequest(ConfigChangeRequest change)
         {
             return new ConfigEntity()
             {
                 Id = Guid.NewGuid(),
                 Name = change.Name,
-                Value = change.Value,
-                NecessaryClaims = change.Claims
-                                        .Select
-                                        (
-                                            x => new ConfigClaim
-                                            {
-                                                Name = x.Key,
-                                                Value = x.Value,
-                                                Id = Guid.NewGuid()
-                                            }
-                                        )
-                                        .ToList()
-
+                Value = change.Value
             };
         }
 
+        #region Create
         internal static async Task<Result> CreateAsync(CommandContext context)
         {
-            var admin = await GetAdminEntityAsync(context);
+            var admin = await context.GetAdminEntityAsync();
+            if (admin == null)
+            {
+                SanityChecks.NotFound(context.AdminName, $"{nameof(AllCommands)}.{nameof(CreateAsync)}");
+            }
             var entity = GenerateConfigEntityFromChangeRequest(context.ChangeRequest);
-            var createClaim = new ConfigClaim[] { ConfigClaim.CanCreate() };
-            bool isAllowed = Sentinel.IsAllowed(context.CommandType, admin.Claims, createClaim);
+            bool isAllowed = Sentinel.IsAllowed(context.CommandType, admin.Claims);
 
             if (isAllowed == false)
             {
-                SanityChecks.NotAllowed(createClaim.Select(x => x.Value).ToList(), CommandTypes.Create, $"{nameof(AllCommands)}.{nameof(CreateAsync)}");
+                SanityChecks.NotAllowed(new List<string> { ConfigClaim.CAN_CREATE }, CommandTypes.Create.ToString(), $"{nameof(AllCommands)}.{nameof(CreateAsync)}");
             }
 
             bool success = false;
-            
             entity.CrudOperationName = CommandTypes.Create;
             success = await context.StorageEngine.StoreEntityAsync(entity);
             
@@ -97,17 +46,58 @@ namespace heitech.configXt.Core.Commands
 
             return new Result
             {
-                Before = new ConfigEntity() { NecessaryClaims = new List<ConfigClaim>() },
+                Before = new ConfigEntity(),
                 RequestType = CommandTypes.Create.ToString(),
                 Success = success,
-                After = entity
+                Current = entity
             }; 
         }
+        #endregion
 
-        internal static  Task<Result> Update(CommandContext context)
+        #region Update
+        internal static async Task<Result> UpdateAsync(CommandContext context)
         {
-            return Task.FromResult<Result>(null);
+            string methName = $"{nameof(AllCommands)}.{nameof(CreateAsync)}";
+            // find config entity
+            var config = await context.GetConfigEntityAsync();
+            if (config == null)
+            {
+                SanityChecks.NotFound(context.ConfigName, methName);
+            }
+            // find admin
+            var admin = await context.GetAdminEntityAsync();
+            if (admin == null)
+            {
+                SanityChecks.NotFound(context.AdminName, methName);
+            }
+            // check is allowed
+            Sentinel.IsAllowed(context.CommandType, admin.Claims);
+            // update
+            config.CrudOperationName = CommandTypes.UpdateValue;
+            var before = new ConfigEntity
+            {
+                Id = config.Id,
+                Name = new string(config.Name.ToCharArray()),
+                Value = new string(config.Value.ToCharArray())
+            };
+            config.Value = context.ChangeRequest.Value;
+            // call storage
+            bool success = await context.StorageEngine.StoreEntityAsync(config);
+            if (!success)
+            {
+                SanityChecks.StorageFailed<ConfigEntity>(context.CommandType.ToString(), methName);
+            }
+
+            // return result
+            return new Result
+            {
+                Before = before,
+                Current = config,
+                Success = success,
+                RequestType = context.CommandType.ToString()
+            };
         }
+        #endregion
 
         internal static  Task<Result> UpdateRights(CommandContext context)
         {

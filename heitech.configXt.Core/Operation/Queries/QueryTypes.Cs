@@ -1,10 +1,9 @@
-namespace heitech.configXt.Core
+namespace heitech.configXt.Core.Queries
 {
     public enum QueryTypes
     {
         ValueRequest,
         ValueExistsRequest,
-        AdminExistsRequest,
-        IsAllowedRequest
+        AdminExistsRequest
     }
 }

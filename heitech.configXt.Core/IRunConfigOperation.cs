@@ -18,13 +18,12 @@ namespace heitech.configXt.Core
             { 
                 Id = Guid.Empty,
                 Name = "empty",
-                Value = "null-object",
-                NecessaryClaims = new List<ConfigClaim>()
+                Value = "null-object"
             };
             return Task.FromResult(new Result
             {
                 Before = empty,
-                After = empty,
+                Current = empty,
                 Success = true,
                 
             });

@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using heitech.configXt.Core.Queries;
 
 namespace heitech.configXt.Core.Operation
 {

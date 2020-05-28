@@ -1,4 +1,4 @@
-namespace heitech.configXt.Core
+namespace heitech.configXt.Core.Commands
 {
     public enum CommandTypes
     {

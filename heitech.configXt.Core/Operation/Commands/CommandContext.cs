@@ -1,6 +1,6 @@
 using heitech.configXt.Core.Entities;
 
-namespace heitech.configXt.Core
+namespace heitech.configXt.Core.Commands
 {
     public class CommandContext : ConfigurationContext
     {
@@ -13,7 +13,7 @@ namespace heitech.configXt.Core
             CommandType = types;
             ChangeRequest = changeRequest;
             Check(changeRequest);
-            Check(ChangeRequest.Claims);
+            ConfigName = ChangeRequest.Name;
         }
     }
 }

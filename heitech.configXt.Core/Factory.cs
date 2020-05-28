@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using heitech.configXt.Core.Commands;
 using heitech.configXt.Core.Operation;
+using heitech.configXt.Core.Queries;
 
 namespace heitech.configXt.Core
 {
@@ -43,17 +44,16 @@ namespace heitech.configXt.Core
         private static readonly Dictionary<CommandTypes, Func<CommandContext, Task<Result>>> _cmds = 
             new Dictionary<CommandTypes, Func<CommandContext, Task<Result>>>
             {
-                [CommandTypes.Delete] = ctx => AllCommands.Delete(ctx),
-                [CommandTypes.Create] = ctx => AllCommands.CreateAsync(ctx),
-                [CommandTypes.UpdateValue] = ctx => AllCommands.Update(ctx),
-                [CommandTypes.UpdateRights] = ctx => AllCommands.UpdateRights(ctx),
+                [CommandTypes.Delete] = async ctx => await AllCommands.Delete(ctx),
+                [CommandTypes.Create] = async ctx => await AllCommands.CreateAsync(ctx),
+                [CommandTypes.UpdateValue] = async ctx => await AllCommands.UpdateAsync(ctx),
+                [CommandTypes.UpdateRights] = async ctx => await AllCommands.UpdateRights(ctx),
             };
         
         private static readonly Dictionary<QueryTypes, Func<QueryContext, Task<Result>>> _queries = 
             new Dictionary<QueryTypes, Func<QueryContext, Task<Result>>>
             {
-                [QueryTypes.ValueRequest] = null,
-                [QueryTypes.IsAllowedRequest] = null,
+                [QueryTypes.ValueRequest] = async ctx => await AllQueries.QueryConfigEntityAsync(ctx),
                 [QueryTypes.ValueExistsRequest] = null,
                 [QueryTypes.AdminExistsRequest] = null
             };
