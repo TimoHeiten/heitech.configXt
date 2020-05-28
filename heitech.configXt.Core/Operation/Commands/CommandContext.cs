@@ -1,18 +1,19 @@
 using heitech.configXt.Core.Entities;
 
-namespace heitech.configXt.Core.Operation
+namespace heitech.configXt.Core
 {
-    public class CommandContext : ConfigurationOperationContext
+    public class CommandContext : ConfigurationContext
     {
         public ConfigChangeRequest ChangeRequest { get; }
         public CommandTypes CommandType { get; }
 
-        public CommandContext(AdministratorEntity admin, CommandTypes types, ConfigChangeRequest changeRequest, IStorageModel model)
+        public CommandContext(string admin, CommandTypes types, ConfigChangeRequest changeRequest, IStorageModel model)
             : base(admin, model)
         {
-            Check(changeRequest);
             CommandType = types;
             ChangeRequest = changeRequest;
+            Check(changeRequest);
+            Check(ChangeRequest.Claims);
         }
     }
 }

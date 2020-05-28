@@ -1,15 +1,11 @@
-using System;
+using System.Collections.Generic;
 
 namespace heitech.configXt.Core.Entities
 {
-    public class ConfigEntity
+    public class ConfigEntity : StorageEntity
     {
-        public Guid Id { get; set; }
         public string Value { get; set; }
-        public string Key { get; set; }
-
-        public string[] AllowedForRead { get; set; }
-        public string[] AllowedForAlter { get; set; }
+        public IList<ConfigClaim> NecessaryClaims { get; set; }
     }
 }
 

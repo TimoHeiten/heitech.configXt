@@ -1,4 +1,4 @@
-namespace heitech.configXt.Core.Operation
+namespace heitech.configXt.Core
 {
     public enum QueryTypes
     {

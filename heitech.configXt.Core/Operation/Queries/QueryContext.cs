@@ -1,15 +1,13 @@
-using System;
-using System.Linq;
 using heitech.configXt.Core.Entities;
 
-namespace heitech.configXt.Core.Operation
+namespace heitech.configXt.Core
 {
-    public class QueryContext : ConfigurationOperationContext
+    public class QueryContext : ConfigurationContext
     {
         public QueryTypes QueryType { get; }
         public ConfigRequest Request { get; }
 
-         public QueryContext(AdministratorEntity admin, QueryTypes types, ConfigRequest request, IStorageModel model)
+         public QueryContext(string admin, QueryTypes types, ConfigRequest request, IStorageModel model)
             : base(admin, model)
         {
             Check(request);

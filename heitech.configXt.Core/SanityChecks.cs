@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using heitech.configXt.Core.Exceptions;
 
 namespace heitech.configXt.Core
 {
@@ -20,12 +22,17 @@ namespace heitech.configXt.Core
 
         internal static void NotFound(string name, string v)
         {
-            throw new InvalidOperationException($"ConfigEntity by Name: [{name}] not found in {v}");
+            throw new InvalidOperationException($"Entity by Name: [{name}] not found in {v}");
         }
 
-        internal static void StorageFailed(Result result, string v)
+        internal static void StorageFailed<T>(string operation, string v)
         {
-            throw new InvalidOperationException($"Storing the entity by Name: [{result.Before?.Key}] failed in {v}");
+            throw new InvalidOperationException($"Storing the entity of type [{typeof(T)}] with operation: [{operation}] failed at {v}");
+        }
+
+        internal static void NotAllowed(List<string> notMet, CommandTypes commandType, string v)
+        {
+            throw new NotAllowedException(commandType, notMet, $"{nameof(CommandTypes)}.{commandType} was not allowed at - {v}");
         }
     }
 }
