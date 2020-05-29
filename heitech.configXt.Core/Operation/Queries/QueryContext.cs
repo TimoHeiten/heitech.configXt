@@ -4,7 +4,8 @@ namespace heitech.configXt.Core.Queries
     {
         public QueryTypes QueryType { get; }
 
-         public QueryContext(string queryName, QueryTypes types, IStorageModel model)
+        public const string QUERY_ALL = "";
+        public QueryContext(string queryName, QueryTypes types, IStorageModel model)
             : base(model)
         {
             QueryType = types;

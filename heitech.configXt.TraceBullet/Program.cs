@@ -1,54 +1,72 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using heitech.configXt.Core;
 using heitech.configXt.Core.Commands;
+using heitech.configXt.Core.Entities;
 using heitech.configXt.Core.Queries;
 
 namespace heitech.configXt.TraceBullet
 {
     class Program
     {
+
+        private static string ToStringOpResult(OperationResult r)
+        {
+            if (r == null)
+                return "Result is null!";
+            return $"ResultType: [{r.ResultType}] - ConfigEntity is Null [{r.Result == null}] - Error: [{r.ErrorMessage} + {r.Error}]";
+        }
         static void Main(string[] args)
         {
             var memory = new InMemoryStore();
-            Result Aresult = CreateInMemory(memory).Result;
+            OperationResult Aresult = CreateInMemory(memory).Result;
 
-            System.Console.WriteLine("Result from call is null: " + Aresult == null);
-            ReadConfigEntityInMemory("ConnectionString", memory).Wait();
+            System.Console.WriteLine(ToStringOpResult(Aresult));
+            var exists = ReadConfigEntityInMemory("ConnectionString", memory).Result;
+            System.Console.WriteLine(ToStringOpResult(exists));
 
-            var temp = Console.ForegroundColor;
-            Console.ForegroundColor = ConsoleColor.Red;
-            System.Console.WriteLine("now update --> press any key");
-            Console.ForegroundColor = temp;
-            Console.ReadKey();
-
+            StepIn("now update --> press any key");
             Aresult = UpdateValueInMemory(memory).Result;
-            System.Console.WriteLine("Result from call is null: " + Aresult == null);
-            ReadConfigEntityInMemory("ConnectionString", memory).Wait();
+            System.Console.WriteLine(ToStringOpResult(Aresult));
 
-            Console.ForegroundColor = ConsoleColor.Red;
-            System.Console.WriteLine("now query fail in try catch! --> press any key");
-            Console.ForegroundColor = temp;
-            Console.ReadKey();
+            StepIn("Read works--> press any key");
+            var read1 = ReadConfigEntityInMemory("ConnectionString", memory).Result;
+            System.Console.WriteLine(ToStringOpResult(read1));
 
+            StepIn("now query fail in try catch! --> press any key");
             try
             {
-                ReadConfigEntityInMemory("Not found", memory).Wait();
+                OperationResult read = ReadConfigEntityInMemory("Not found", memory).Result;
+                System.Console.WriteLine(ToStringOpResult(read));
             }
             catch (System.Exception ex)
             {
                 System.Console.WriteLine("failed with:\n" + ex);
             }
 
-            Console.ForegroundColor = ConsoleColor.Red;
-            System.Console.WriteLine("now Delete ConnectionString Value and catch exception! --> press any key");
-            Console.ForegroundColor = temp;
-            Console.ReadKey();
+            StepIn("Create another one and query all");
+            var r2 = CreateInMemory(memory).Result;
+            System.Console.WriteLine(ToStringOpResult(r2));
+
+            var readAll = ReadAllAsync(memory).Result;
+            System.Console.WriteLine(ToStringOpResult(readAll));
+
+            StepIn("now Delete ConnectionString Value and catch exception! --> press any key");
             Aresult = DeleteAndQueryAfter(memory).Result;
-            System.Console.WriteLine("Result from call is null: " + Aresult == null);
+            System.Console.WriteLine(ToStringOpResult(Aresult));
         }
 
-        private static async Task ReadConfigEntityInMemory(string queryName, InMemoryStore store)
+        private static void StepIn(string nextText)
+        {
+            var temp = Console.ForegroundColor;
+            Console.ForegroundColor = ConsoleColor.Red;
+            System.Console.WriteLine(nextText);
+            Console.ForegroundColor = temp;
+            Console.ReadKey();
+        }
+
+        private static async Task<OperationResult> ReadConfigEntityInMemory(string queryName, InMemoryStore store)
         {
             var context = new QueryContext(queryName, QueryTypes.ValueRequest, store);
             IRunConfigOperation operation = Factory.CreateOperation(context);
@@ -56,16 +74,27 @@ namespace heitech.configXt.TraceBullet
             var result = await operation.ExecuteAsync();
             
             System.Console.WriteLine("in memory count: " + store._store.Count);
-            System.Console.WriteLine("ConfigEntityResult Name: " + result?.Current?.Name);
-            System.Console.WriteLine("ConfigEntityResult Value: " + result?.Current?.Value);
+            System.Console.WriteLine("ConfigEntityResult Name: " + result.Result?.Name);
+            System.Console.WriteLine("ConfigEntityResult Value: " + result.Result?.Value);
+
+            return result;
         }
 
-        private static Task<Result> ReadAllAsync(string adminName, InMemoryStore store)
+        private static async Task<OperationResult> ReadAllAsync(InMemoryStore store)
         {
-            throw new NotImplementedException();
+            var context = new QueryContext(QueryContext.QUERY_ALL, QueryTypes.AllValues, store);
+            IRunConfigOperation operation = Factory.CreateOperation(context);
+
+            var result = await operation.ExecuteAsync();
+            
+            System.Console.WriteLine("in memory count: " + store._store.Count);
+            var coll = result.Result as ConfigCollection;
+            System.Console.WriteLine("ConfigEntityResult items from all: " + coll.WrappedConfigEntities.Count());
+
+            return result;
         }
 
-        private static async Task<Result> UpdateValueInMemory(InMemoryStore store)
+        private static async Task<OperationResult> UpdateValueInMemory(InMemoryStore store)
         {
             var changeRequest = new ConfigChangeRequest
             {
@@ -76,27 +105,27 @@ namespace heitech.configXt.TraceBullet
             var context = new CommandContext(CommandTypes.UpdateValue, changeRequest, store);
 
             IRunConfigOperation operation = Factory.CreateOperation(context);
-            Result result = await operation.ExecuteAsync();
+            OperationResult result = await operation.ExecuteAsync();
             
             return result;
         }
 
-        private static async Task<Result> CreateInMemory(InMemoryStore store)
+        private static async Task<OperationResult> CreateInMemory(InMemoryStore store, string other=null)
         {
             var changeRequest = new ConfigChangeRequest
             {
-                Name = "ConnectionString",
+                Name = other == null ? "ConnectionString" : other,
                 Value = "/Users/timoheiten/my-db.db"
             };
             var context = new CommandContext(CommandTypes.Create, changeRequest, store);
 
             IRunConfigOperation operation = Factory.CreateOperation(context);
-            Result result = await operation.ExecuteAsync();
+            OperationResult result = await operation.ExecuteAsync();
             
             return result;
         }
 
-        private static async Task<Result> DeleteAndQueryAfter(InMemoryStore store)
+        private static async Task<OperationResult> DeleteAndQueryAfter(InMemoryStore store)
         {
             var changeRequest = new ConfigChangeRequest
             {
@@ -106,17 +135,17 @@ namespace heitech.configXt.TraceBullet
             var context = new CommandContext(CommandTypes.Delete, changeRequest, store);
 
             IRunConfigOperation operation = Factory.CreateOperation(context);
-            Result result = await operation.ExecuteAsync();
+            OperationResult result = await operation.ExecuteAsync();
 
-            try
-            {
-                await ReadConfigEntityInMemory("ConnectionString", store);
-            } 
-            catch
+            var queryResult = await ReadConfigEntityInMemory("ConnectionString", store);
+            if (queryResult.IsSuccess == false)
             {
                 System.Console.WriteLine("now after delete it was not found!");
             }
-
+            else
+            {
+                System.Console.WriteLine("could still find --> error in test");
+            }
             return result;
         }
     }

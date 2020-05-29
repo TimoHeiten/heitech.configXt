@@ -15,47 +15,53 @@ namespace heitech.configXt.Core
             SanityChecks.CheckNull(context, methName);
             if (context is QueryContext queryContext)
             {
-                if (_queries.TryGetValue(queryContext.QueryType, out Func<QueryContext, Task<Result>> query))
+                if (_queries.TryGetValue(queryContext.QueryType, out Func<QueryContext, Task<OperationResult>> query))
                     return new RunQueryConfigOperation(query, queryContext);
                 else 
                 {
-                    SanityChecks.NotFound(queryContext.QueryType.ToString(), methName);
-                    return new NullOperation();
+                    return new RunConfigNullOperation
+                    (
+                        context,
+                        () => SanityChecks.NotFound(queryContext.QueryType.ToString(), methName)
+                    );
                 }
             }
             else if (context is CommandContext commandContext)
             {
-                if (_cmds.TryGetValue(commandContext.CommandType, out Func<CommandContext, Task<Result>> command))
+                if (_cmds.TryGetValue(commandContext.CommandType, out Func<CommandContext, Task<OperationResult>> command))
                     return new RunCommandConfigOperation(command, commandContext);
                 else
                 {
-                    SanityChecks.NotFound(commandContext.CommandType.ToString(), methName);
-                    return new NullOperation();
+                    return new RunConfigNullOperation
+                    (
+                        context,
+                        () => SanityChecks.NotFound(commandContext.CommandType.ToString(), methName)
+                    );
                 }
             }
             else
             {
-                SanityChecks.NotSupported(context.GetType().FullName, methName);
-                // never called cause not supported throws
-                return new NullOperation();
+                return new RunConfigNullOperation
+                (
+                    context,
+                    () => SanityChecks.NotSupported(context.GetType().FullName, methName)
+                );
             } 
         }
 
-        private static readonly Dictionary<CommandTypes, Func<CommandContext, Task<Result>>> _cmds = 
-            new Dictionary<CommandTypes, Func<CommandContext, Task<Result>>>
+        private static readonly Dictionary<CommandTypes, Func<CommandContext, Task<OperationResult>>> _cmds = 
+            new Dictionary<CommandTypes, Func<CommandContext, Task<OperationResult>>>
             {
                 [CommandTypes.Delete] = async ctx => await AllCommands.DeleteAsync(ctx),
                 [CommandTypes.Create] = async ctx => await AllCommands.CreateAsync(ctx),
                 [CommandTypes.UpdateValue] = async ctx => await AllCommands.UpdateAsync(ctx),
-                [CommandTypes.UpdateRights] = async ctx => await AllCommands.UpdateRights(ctx),
             };
         
-        private static readonly Dictionary<QueryTypes, Func<QueryContext, Task<Result>>> _queries = 
-            new Dictionary<QueryTypes, Func<QueryContext, Task<Result>>>
+        private static readonly Dictionary<QueryTypes, Func<QueryContext, Task<OperationResult>>> _queries = 
+            new Dictionary<QueryTypes, Func<QueryContext, Task<OperationResult>>>
             {
                 [QueryTypes.ValueRequest] = async ctx => await AllQueries.QueryConfigEntityAsync(ctx),
-                [QueryTypes.ValueExistsRequest] = null,
-                [QueryTypes.AdminExistsRequest] = null
+                [QueryTypes.AllValues] = async ctx => await AllQueries.QueryAllConfigEntityValuesAsync(ctx),
             };
     }
 }

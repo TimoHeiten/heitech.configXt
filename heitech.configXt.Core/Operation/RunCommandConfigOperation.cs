@@ -6,20 +6,18 @@ namespace heitech.configXt.Core.Operation
 {
     public class RunCommandConfigOperation : IRunConfigOperation
     {
-        private readonly Func<CommandContext, Task<Result>> _command;
+        private readonly Func<CommandContext, Task<OperationResult>> _command;
         private readonly CommandContext _context;
 
-        public RunCommandConfigOperation(Func<CommandContext, Task<Result>> command, CommandContext context)
+        public RunCommandConfigOperation(Func<CommandContext, Task<OperationResult>> command, CommandContext context)
         {
             _command = command;
             _context = context;
         }
 
-        public async Task<Result> ExecuteAsync()
+        public Task<OperationResult> ExecuteAsync()
         {
-            Result result = await _command(_context);
-
-            return result;
+            return _command(_context);
         }
     }
 }

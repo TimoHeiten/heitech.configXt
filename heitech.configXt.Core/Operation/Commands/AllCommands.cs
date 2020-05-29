@@ -18,80 +18,55 @@ namespace heitech.configXt.Core.Commands
         }
 
         #region Create
-        internal static async Task<Result> CreateAsync(CommandContext context)
+        internal static async Task<OperationResult> CreateAsync(CommandContext context)
         {
             var entity = GenerateConfigEntityFromChangeRequest(context.ChangeRequest);
 
             bool success = false;
             entity.CrudOperationName = CommandTypes.Create;
             success = await context.StorageEngine.StoreEntityAsync(entity);
-            
+
             if (!success)
             {
-                SanityChecks.StorageFailed<ConfigEntity>(context.CommandType.ToString(), $"{nameof(AllCommands)}.{nameof(CreateAsync)}");
+                return SanityChecks.StorageFailed<ConfigEntity>(context.CommandType.ToString(), $"{nameof(AllCommands)}.{nameof(CreateAsync)}");
             }
 
-            return new Result
-            {
-                Before = new ConfigEntity(),
-                RequestType = CommandTypes.Create.ToString(),
-                Success = success,
-                Current = entity
-            }; 
+            return OperationResult.Success(entity);
         }
         #endregion
 
         #region Update
-        internal static async Task<Result> UpdateAsync(CommandContext context)
+        internal static async Task<OperationResult> UpdateAsync(CommandContext context)
         {
             string methName = $"{nameof(AllCommands)}.{nameof(UpdateAsync)}";
             var configEntity = await TryExtractConfigEntityAsync(methName, context, CommandTypes.UpdateValue, c => { c.Value = context.ChangeRequest.Value; return c; });
             if (configEntity.Success == false)
             {
-                configEntity.ThrowError();
+                return configEntity.ThrowError();
             }
             // return result
-            return new Result
-            {
-                Before = configEntity.Before,
-                Current = configEntity.Entity,
-                Success = configEntity.Success,
-                RequestType = context.CommandType.ToString()
-            };
+            return OperationResult.Success(configEntity.Entity);
         }
         #endregion
 
-        internal static  Task<Result> UpdateRights(CommandContext context)
-        {
-            // not relevant yet.
-            return Task.FromResult<Result>(new Result { Before = null, Current = null, RequestType = context.CommandType.ToString()});
-        }
-
-        internal static async Task<Result> DeleteAsync(CommandContext context)
+        internal static async Task<OperationResult> DeleteAsync(CommandContext context)
         {
             string methName = $"{nameof(AllCommands)}.{nameof(DeleteAsync)}";
             var configEntityResult = await TryExtractConfigEntityAsync(methName, context, CommandTypes.Delete, c => c);
 
             if (configEntityResult.Success == false)
             {
-                configEntityResult.ThrowError();
+                return configEntityResult.ThrowError();
             }
 
             // return result
-            return new Result
-            {
-                Before = configEntityResult.Before,
-                Current = null,
-                RequestType = context.CommandType.ToString(),
-                Success = true
-            };
+            return OperationResult.Success(configEntityResult.Entity);
         }
 
-         private static async Task<ConfigEntityResult> TryExtractConfigEntityAsync(string initiatingMethod, CommandContext context, CommandTypes storeType, Func<ConfigEntity, ConfigEntity> adjustEntity)
+        private static async Task<ConfigEntityResult> TryExtractConfigEntityAsync(string initiatingMethod, CommandContext context, CommandTypes storeType, Func<ConfigEntity, ConfigEntity> adjustEntity)
         {
-            // call storage with delete operation
             // get config entity if exists
-            var config = await context.GetConfigEntityAsync();
+            var config = await context.StorageEngine.GetEntityByNameAsync(context.ConfigName);
             if (config == null)
             {
                 return new ConfigEntityResult
@@ -131,7 +106,7 @@ namespace heitech.configXt.Core.Commands
         private class ConfigEntityResult
         {
             public bool Success { get; set; }
-            public Action ThrowError { get; set; }
+            public Func<OperationResult> ThrowError { get; set; }
             public ConfigEntity Entity { get; set; }
             public ConfigEntity Before { get; set; }
         }

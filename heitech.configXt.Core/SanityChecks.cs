@@ -13,19 +13,19 @@ namespace heitech.configXt.Core
             }
         }
 
-        internal static void NotSupported(string fullName, string methodName)
+        internal static OperationResult NotSupported(string fullName, string methodName)
         {
-            throw new NotSupportedException($"In method: [{methodName}] - {fullName} is not supported");
+            return OperationResult.Failure(ResultType.BadRequest, methodName);
         }
 
-        internal static void NotFound(string name, string v)
+        internal static OperationResult NotFound(string name, string v)
         {
-            throw new InvalidOperationException($"Entity by Name: [{name}] not found in {v}");
+            return OperationResult.Failure(ResultType.NotFound, v);
         }
 
-        internal static void StorageFailed<T>(string operation, string v)
+        internal static OperationResult StorageFailed<T>(string operation, string v)
         {
-            throw new InvalidOperationException($"Storing the entity of type [{typeof(T)}] with operation: [{operation}] failed at {v}");
+            return OperationResult.Failure(ResultType.Forbidden, v);
         }
     }
 }
