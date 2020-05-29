@@ -44,7 +44,7 @@ namespace heitech.configXt.Core
         private static readonly Dictionary<CommandTypes, Func<CommandContext, Task<Result>>> _cmds = 
             new Dictionary<CommandTypes, Func<CommandContext, Task<Result>>>
             {
-                [CommandTypes.Delete] = async ctx => await AllCommands.Delete(ctx),
+                [CommandTypes.Delete] = async ctx => await AllCommands.DeleteAsync(ctx),
                 [CommandTypes.Create] = async ctx => await AllCommands.CreateAsync(ctx),
                 [CommandTypes.UpdateValue] = async ctx => await AllCommands.UpdateAsync(ctx),
                 [CommandTypes.UpdateRights] = async ctx => await AllCommands.UpdateRights(ctx),

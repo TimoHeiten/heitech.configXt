@@ -8,16 +8,18 @@ namespace heitech.configXt.Core.Operation
 {
     internal static class Sentinel
     {
-        internal static bool IsAllowed(CommandTypes types, IEnumerable<ConfigClaim> hasClaims)
+        internal static bool IsAllowed(this CommandContext context, ConfigEntity entity, IEnumerable<ConfigClaim> hasClaims)
         {
             Predicate<string> predicate = requiredClaim => hasClaims.Any(x => x.Value.Equals(requiredClaim, StringComparison.InvariantCultureIgnoreCase));
 
-            switch (types)
+            switch (context.CommandType)
             {
                 case CommandTypes.Create:
                     return predicate(ConfigClaim.CAN_CREATE);
                 case CommandTypes.UpdateValue:
                     return predicate(ConfigClaim.CAN_UPDATE);
+                case CommandTypes.Delete:
+                    return predicate(ConfigClaim.CAN_DELETE);
                 default:
                     throw new NotSupportedException();
             }
