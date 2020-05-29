@@ -2,29 +2,19 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using heitech.configXt.Core.Commands;
+using heitech.configXt.Core.Entities;
 
 namespace heitech.configXt.Core
 {
     public interface IStorageModel
     {
-        Task<T> GetEntityByNameAsync<T>(string byName)
-            where T : StorageEntity;
+        Task<ConfigEntity> GetEntityByNameAsync(string byName);
         
         ///<summary>
         /// Create, Update or Delete at once
         ///</summary>
-        Task<bool> StoreEntityAsync<T>(T entity)
-            where T : StorageEntity;
+        Task<bool> StoreEntityAsync(ConfigEntity entity);
 
-        Task<IEnumerable<T>> AllEntitesAsync<T>()
-            where T : StorageEntity;
-    }
-
-    public class StorageEntity
-    {
-        public Guid Id { get; set; }
-        public string Name { get; set; }
-
-        public CommandTypes CrudOperationName { get; internal set; }
+        Task<IEnumerable<ConfigEntity>> AllEntitesAsync();
     }
 }

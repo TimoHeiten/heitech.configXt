@@ -1,8 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using heitech.configXt.Core.Entities;
-using heitech.configXt.Core.Operation;
 
 namespace heitech.configXt.Core.Commands
 {
@@ -22,18 +20,7 @@ namespace heitech.configXt.Core.Commands
         #region Create
         internal static async Task<Result> CreateAsync(CommandContext context)
         {
-            var admin = await context.GetAdminEntityAsync();
-            if (admin == null)
-            {
-                SanityChecks.NotFound(context.AdminName, $"{nameof(AllCommands)}.{nameof(CreateAsync)}");
-            }
             var entity = GenerateConfigEntityFromChangeRequest(context.ChangeRequest);
-            bool isAllowed = context.IsAllowed(null /*todo*/, admin.Claims);
-
-            if (isAllowed == false)
-            {
-                SanityChecks.NotAllowed(new List<string> { ConfigClaim.CAN_CREATE }, CommandTypes.Create.ToString(), $"{nameof(AllCommands)}.{nameof(CreateAsync)}");
-            }
 
             bool success = false;
             entity.CrudOperationName = CommandTypes.Create;
@@ -111,26 +98,6 @@ namespace heitech.configXt.Core.Commands
                 {
                     Success = false,
                     ThrowError = () => SanityChecks.NotFound(context.ConfigName, initiatingMethod)
-                };
-            }
-            // // get admin & check claims
-            var admin = await context.GetAdminEntityAsync();
-            if (admin == null)
-            {
-                return new ConfigEntityResult
-                {
-                    Success = false,
-                    ThrowError = () => SanityChecks.NotFound(context.AdminName, initiatingMethod)
-                };
-            }
-            // // check is allowed
-            bool isAllowed = context.IsAllowed(config, admin.Claims);
-            if (!isAllowed)
-            {
-                return new ConfigEntityResult
-                {
-                    Success = false,
-                    ThrowError = () => SanityChecks.NotAllowed(null /*todo with new claims implementation*/, context.CommandType.ToString(), initiatingMethod)
                 };
             }
             var before = new ConfigEntity

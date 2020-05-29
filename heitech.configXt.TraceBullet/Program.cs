@@ -11,7 +11,7 @@ namespace heitech.configXt.TraceBullet
         static void Main(string[] args)
         {
             var memory = new InMemoryStore();
-            Result Aresult = CreateInMemory("AdminName", memory).Result;
+            Result Aresult = CreateInMemory(memory).Result;
 
             System.Console.WriteLine("Result from call is null: " + Aresult == null);
             ReadConfigEntityInMemory("ConnectionString", memory).Wait();
@@ -22,7 +22,7 @@ namespace heitech.configXt.TraceBullet
             Console.ForegroundColor = temp;
             Console.ReadKey();
 
-            Aresult = UpdateValueInMemory("AdminName", memory).Result;
+            Aresult = UpdateValueInMemory(memory).Result;
             System.Console.WriteLine("Result from call is null: " + Aresult == null);
             ReadConfigEntityInMemory("ConnectionString", memory).Wait();
 
@@ -44,13 +44,13 @@ namespace heitech.configXt.TraceBullet
             System.Console.WriteLine("now Delete ConnectionString Value and catch exception! --> press any key");
             Console.ForegroundColor = temp;
             Console.ReadKey();
-            Aresult = DeleteAndQueryAfter("AdminName", memory).Result;
+            Aresult = DeleteAndQueryAfter(memory).Result;
             System.Console.WriteLine("Result from call is null: " + Aresult == null);
         }
 
         private static async Task ReadConfigEntityInMemory(string queryName, InMemoryStore store)
         {
-            var context = new QueryContext("AdminName", queryName, QueryTypes.ValueRequest, store);
+            var context = new QueryContext(queryName, QueryTypes.ValueRequest, store);
             IRunConfigOperation operation = Factory.CreateOperation(context);
 
             var result = await operation.ExecuteAsync();
@@ -60,7 +60,12 @@ namespace heitech.configXt.TraceBullet
             System.Console.WriteLine("ConfigEntityResult Value: " + result?.Current?.Value);
         }
 
-        private static async Task<Result> UpdateValueInMemory(string adminName, InMemoryStore store)
+        private static Task<Result> ReadAllAsync(string adminName, InMemoryStore store)
+        {
+            throw new NotImplementedException();
+        }
+
+        private static async Task<Result> UpdateValueInMemory(InMemoryStore store)
         {
             var changeRequest = new ConfigChangeRequest
             {
@@ -68,7 +73,7 @@ namespace heitech.configXt.TraceBullet
                 Value = "/Users/timoheiten/my-db-2.db"
             };
 
-            var context = new CommandContext(adminName, CommandTypes.UpdateValue, changeRequest, store);
+            var context = new CommandContext(CommandTypes.UpdateValue, changeRequest, store);
 
             IRunConfigOperation operation = Factory.CreateOperation(context);
             Result result = await operation.ExecuteAsync();
@@ -76,14 +81,14 @@ namespace heitech.configXt.TraceBullet
             return result;
         }
 
-        private static async Task<Result> CreateInMemory(string adminName, InMemoryStore store)
+        private static async Task<Result> CreateInMemory(InMemoryStore store)
         {
             var changeRequest = new ConfigChangeRequest
             {
                 Name = "ConnectionString",
                 Value = "/Users/timoheiten/my-db.db"
             };
-            var context = new CommandContext(adminName, CommandTypes.Create, changeRequest, store);
+            var context = new CommandContext(CommandTypes.Create, changeRequest, store);
 
             IRunConfigOperation operation = Factory.CreateOperation(context);
             Result result = await operation.ExecuteAsync();
@@ -91,14 +96,14 @@ namespace heitech.configXt.TraceBullet
             return result;
         }
 
-        private static async Task<Result> DeleteAndQueryAfter(string adminName, InMemoryStore store)
+        private static async Task<Result> DeleteAndQueryAfter(InMemoryStore store)
         {
             var changeRequest = new ConfigChangeRequest
             {
                 Name = "ConnectionString",
                 Value = null
             };
-            var context = new CommandContext(adminName, CommandTypes.Delete, changeRequest, store);
+            var context = new CommandContext(CommandTypes.Delete, changeRequest, store);
 
             IRunConfigOperation operation = Factory.CreateOperation(context);
             Result result = await operation.ExecuteAsync();

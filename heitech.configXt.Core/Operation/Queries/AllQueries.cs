@@ -1,6 +1,6 @@
-using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using heitech.configXt.Core.Operation;
+using heitech.configXt.Core.Entities;
 
 namespace heitech.configXt.Core.Queries
 {
@@ -9,14 +9,6 @@ namespace heitech.configXt.Core.Queries
         internal static async Task<Result> QueryConfigEntityAsync(QueryContext context)
         {
             string methName = $"{nameof(AllQueries)}.{nameof(QueryConfigEntityAsync)}";
-            // check admin
-            var admin = await context.GetAdminEntityAsync();
-            // check allowed
-            bool isAllowed = admin.IsReadAllowed();
-            if (isAllowed == false)
-            {
-                SanityChecks.NotAllowed(new List<string> { ConfigClaim.CAN_READ }, QueryTypes.ValueRequest.ToString(), methName);
-            }
             // check if exists
             var config = await context.GetConfigEntityAsync();
             if (config == null)
@@ -33,5 +25,27 @@ namespace heitech.configXt.Core.Queries
                 Success = true,
             };
         }
+
+        internal static async Task<Result> QueryAllConfigEntityValuesAsync(QueryContext context)
+        {
+            string methName = $"{nameof(AllQueries)}.{nameof(QueryConfigEntityAsync)}";
+            // check if exists
+            var configs = await context.StorageEngine.AllEntitesAsync();
+            if (configs.Any() == false)
+            {
+                SanityChecks.NotFound(context.ConfigName, methName);
+            }
+
+            // return entity
+            var collection = new ConfigCollection { WrappedConfigEntities = configs };
+            return new Result 
+            {
+                RequestType = context.QueryType.ToString(),
+                Current = collection,
+                Before = collection,
+                Success = true,
+            };
+        }
     }
+    
 }

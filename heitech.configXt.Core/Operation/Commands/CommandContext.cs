@@ -7,8 +7,8 @@ namespace heitech.configXt.Core.Commands
         public ConfigChangeRequest ChangeRequest { get; }
         public CommandTypes CommandType { get; }
 
-        public CommandContext(string admin, CommandTypes types, ConfigChangeRequest changeRequest, IStorageModel model)
-            : base(admin, model)
+        public CommandContext(CommandTypes types, ConfigChangeRequest changeRequest, IStorageModel model)
+            : base(model)
         {
             CommandType = types;
             ChangeRequest = changeRequest;

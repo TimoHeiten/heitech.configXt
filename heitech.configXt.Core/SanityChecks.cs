@@ -1,7 +1,4 @@
 using System;
-using System.Collections.Generic;
-using heitech.configXt.Core.Commands;
-using heitech.configXt.Core.Exceptions;
 
 namespace heitech.configXt.Core
 {
@@ -29,11 +26,6 @@ namespace heitech.configXt.Core
         internal static void StorageFailed<T>(string operation, string v)
         {
             throw new InvalidOperationException($"Storing the entity of type [{typeof(T)}] with operation: [{operation}] failed at {v}");
-        }
-
-        internal static void NotAllowed(List<string> notMet, string commandType, string v)
-        {
-            throw new NotAllowedException(commandType, notMet, $"{nameof(CommandTypes)}.{commandType} was not allowed at - {v}");
         }
     }
 }
