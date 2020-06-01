@@ -39,7 +39,11 @@ namespace heitech.configXt.Core
         /// Static factory method: Indicating Success of operation
         ///</summary>
         public static OperationResult Success(ConfigEntity obj)
-            => Create(ResultType.Ok, obj);
+        {
+            var result = Create(ResultType.Ok, obj);
+            result.IsSuccess = true;
+            return result;
+        }
 
         private static OperationResult Create(ResultType t, ConfigEntity o = null, Exception e = null)
             => new OperationResult

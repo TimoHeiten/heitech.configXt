@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "heitech.configXt.Core", "he
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "heitech.configXt.TraceBullet", "heitech.configXt.TraceBullet\heitech.configXt.TraceBullet.csproj", "{FC7759DA-3EB9-40AC-B8CC-34E2DEF0237A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "heitech.configXt.Tests", "heitech.configXt.Tests\heitech.configXt.Tests.csproj", "{A186DBD1-1DC9-46AE-8326-B64A43490F2E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -44,5 +46,17 @@ Global
 		{FC7759DA-3EB9-40AC-B8CC-34E2DEF0237A}.Release|x64.Build.0 = Release|Any CPU
 		{FC7759DA-3EB9-40AC-B8CC-34E2DEF0237A}.Release|x86.ActiveCfg = Release|Any CPU
 		{FC7759DA-3EB9-40AC-B8CC-34E2DEF0237A}.Release|x86.Build.0 = Release|Any CPU
+		{A186DBD1-1DC9-46AE-8326-B64A43490F2E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A186DBD1-1DC9-46AE-8326-B64A43490F2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A186DBD1-1DC9-46AE-8326-B64A43490F2E}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A186DBD1-1DC9-46AE-8326-B64A43490F2E}.Debug|x64.Build.0 = Debug|Any CPU
+		{A186DBD1-1DC9-46AE-8326-B64A43490F2E}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{A186DBD1-1DC9-46AE-8326-B64A43490F2E}.Debug|x86.Build.0 = Debug|Any CPU
+		{A186DBD1-1DC9-46AE-8326-B64A43490F2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A186DBD1-1DC9-46AE-8326-B64A43490F2E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A186DBD1-1DC9-46AE-8326-B64A43490F2E}.Release|x64.ActiveCfg = Release|Any CPU
+		{A186DBD1-1DC9-46AE-8326-B64A43490F2E}.Release|x64.Build.0 = Release|Any CPU
+		{A186DBD1-1DC9-46AE-8326-B64A43490F2E}.Release|x86.ActiveCfg = Release|Any CPU
+		{A186DBD1-1DC9-46AE-8326-B64A43490F2E}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

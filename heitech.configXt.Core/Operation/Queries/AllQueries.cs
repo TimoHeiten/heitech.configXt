@@ -1,7 +1,9 @@
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using heitech.configXt.Core.Entities;
 
+[assembly: InternalsVisibleTo("heitech.configXt.Tests.Core")]
 namespace heitech.configXt.Core.Queries
 {
     internal static class AllQueries
@@ -9,6 +11,9 @@ namespace heitech.configXt.Core.Queries
         internal static async Task<OperationResult> QueryConfigEntityAsync(QueryContext context)
         {
             string methName = $"{nameof(AllQueries)}.{nameof(QueryConfigEntityAsync)}";
+            SanityChecks.CheckNull(context, methName);
+            SanityChecks.IsSameOperationType(QueryTypes.ValueRequest.ToString(), context.QueryType.ToString());
+
             // check if exists
             var config = await context.StorageEngine.GetEntityByNameAsync(context.ConfigName);
             if (config == null)
@@ -23,9 +28,12 @@ namespace heitech.configXt.Core.Queries
         internal static async Task<OperationResult> QueryAllConfigEntityValuesAsync(QueryContext context)
         {
             string methName = $"{nameof(AllQueries)}.{nameof(QueryConfigEntityAsync)}";
+            SanityChecks.CheckNull(context, methName);
+            SanityChecks.IsSameOperationType(QueryTypes.AllValues.ToString(), context.QueryType.ToString());
+
             // check if exists
             var configs = await context.StorageEngine.AllEntitesAsync();
-            if (configs.Any() == false)
+            if (configs == null || configs.Any() == false)
             {
                 return SanityChecks.NotFound(context.ConfigName, methName);
             }

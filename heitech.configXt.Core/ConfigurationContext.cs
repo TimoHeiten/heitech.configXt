@@ -1,6 +1,4 @@
 using System;
-using System.Threading.Tasks;
-using heitech.configXt.Core.Entities;
 
 namespace heitech.configXt.Core
 {
@@ -25,12 +23,6 @@ namespace heitech.configXt.Core
         {
             Check(model);;
             StorageEngine = model;
-        }
-
-        internal async Task<ConfigEntity> GetConfigEntityAsync()
-        {
-            var storage = StorageEngine;
-            return await storage.GetEntityByNameAsync(ConfigName);
         }
     }
 }

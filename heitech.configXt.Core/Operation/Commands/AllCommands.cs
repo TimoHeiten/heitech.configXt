@@ -20,6 +20,10 @@ namespace heitech.configXt.Core.Commands
         #region Create
         internal static async Task<OperationResult> CreateAsync(CommandContext context)
         {
+            string methName = $"{nameof(AllCommands)}.{nameof(CreateAsync)}";
+            SanityChecks.CheckNull(context, methName);
+            SanityChecks.IsSameOperationType(CommandTypes.Create.ToString(), context.CommandType.ToString());
+
             var entity = GenerateConfigEntityFromChangeRequest(context.ChangeRequest);
 
             bool success = false;
@@ -28,7 +32,7 @@ namespace heitech.configXt.Core.Commands
 
             if (!success)
             {
-                return SanityChecks.StorageFailed<ConfigEntity>(context.CommandType.ToString(), $"{nameof(AllCommands)}.{nameof(CreateAsync)}");
+                return SanityChecks.StorageFailed<ConfigEntity>(context.CommandType.ToString(), methName);
             }
 
             return OperationResult.Success(entity);
@@ -39,6 +43,9 @@ namespace heitech.configXt.Core.Commands
         internal static async Task<OperationResult> UpdateAsync(CommandContext context)
         {
             string methName = $"{nameof(AllCommands)}.{nameof(UpdateAsync)}";
+            SanityChecks.CheckNull(context, methName);
+            SanityChecks.IsSameOperationType(CommandTypes.UpdateValue.ToString(), context.CommandType.ToString());
+
             var configEntity = await TryExtractConfigEntityAsync(methName, context, CommandTypes.UpdateValue, c => { c.Value = context.ChangeRequest.Value; return c; });
             if (configEntity.Success == false)
             {
@@ -52,6 +59,9 @@ namespace heitech.configXt.Core.Commands
         internal static async Task<OperationResult> DeleteAsync(CommandContext context)
         {
             string methName = $"{nameof(AllCommands)}.{nameof(DeleteAsync)}";
+            SanityChecks.CheckNull(context, methName);
+            SanityChecks.IsSameOperationType(CommandTypes.Delete.ToString(), context.CommandType.ToString());
+
             var configEntityResult = await TryExtractConfigEntityAsync(methName, context, CommandTypes.Delete, c => c);
 
             if (configEntityResult.Success == false)
