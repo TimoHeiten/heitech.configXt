@@ -59,7 +59,7 @@ namespace heitech.configXt.Tests.Core
             // create it
             var createContext = new CommandContext(CommandTypes.Create, new ConfigChangeRequest { Name = name, Value = startValue}, model);
             Assert.Null(model._entity);
-            var result = await Factory.CreateOperation(createContext).ExecuteAsync();
+            var result = await Factory.RunOperationAsync(createContext);
             Assert.True(result.IsSuccess);
             Assert.NotNull(model._entity);
             result = null;
@@ -68,7 +68,7 @@ namespace heitech.configXt.Tests.Core
             Func<string, Task> queryAsync = async (expected) => 
             {
                 var queryContext = new QueryContext(name, QueryTypes.ValueRequest, model);
-                result = await Factory.CreateOperation(queryContext).ExecuteAsync();
+                result = await Factory.RunOperationAsync(queryContext);
                 Assert.True(result.IsSuccess);
                 Assert.Equal(name, result.Result.Name);
                 Assert.Equal(expected, result.Result.Value);
@@ -79,7 +79,7 @@ namespace heitech.configXt.Tests.Core
             // update it
             string updated = "updated";
             var update = new CommandContext(CommandTypes.UpdateValue, new ConfigChangeRequest { Name = name, Value = updated}, model);
-            result = await Factory.CreateOperation(update).ExecuteAsync();
+            result = await Factory.RunOperationAsync(update);
             Assert.True(result.IsSuccess);
             Assert.Equal(updated, result.Result.Value);
 
@@ -88,13 +88,13 @@ namespace heitech.configXt.Tests.Core
 
             // delete
             var delete = new CommandContext(CommandTypes.Delete, new ConfigChangeRequest { Name = name, Value = "does not matter" }, model);
-            result = await Factory.CreateOperation(delete).ExecuteAsync();
+            result = await Factory.RunOperationAsync(delete);
             Assert.True(result.IsSuccess);
             Assert.NotNull(result.Result);
 
             // last query reveals null
             var queryContext2 = new QueryContext(name, QueryTypes.ValueRequest, model);
-            result = await Factory.CreateOperation(queryContext2).ExecuteAsync();
+            result = await Factory.RunOperationAsync(queryContext2);
             Assert.False(result.IsSuccess);
             Assert.Equal(ResultType.NotFound, result.ResultType);
         }

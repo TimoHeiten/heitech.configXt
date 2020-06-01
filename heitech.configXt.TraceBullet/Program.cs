@@ -69,10 +69,8 @@ namespace heitech.configXt.TraceBullet
         private static async Task<OperationResult> ReadConfigEntityInMemory(string queryName, InMemoryStore store)
         {
             var context = new QueryContext(queryName, QueryTypes.ValueRequest, store);
-            IRunConfigOperation operation = Factory.CreateOperation(context);
+            var result = await Factory.RunOperationAsync(context);
 
-            var result = await operation.ExecuteAsync();
-            
             System.Console.WriteLine("in memory count: " + store._store.Count);
             System.Console.WriteLine("ConfigEntityResult Name: " + result.Result?.Name);
             System.Console.WriteLine("ConfigEntityResult Value: " + result.Result?.Value);
@@ -83,9 +81,7 @@ namespace heitech.configXt.TraceBullet
         private static async Task<OperationResult> ReadAllAsync(InMemoryStore store)
         {
             var context = new QueryContext(QueryContext.QUERY_ALL, QueryTypes.AllValues, store);
-            IRunConfigOperation operation = Factory.CreateOperation(context);
-
-            var result = await operation.ExecuteAsync();
+            OperationResult result = await Factory.RunOperationAsync(context);
             
             System.Console.WriteLine("in memory count: " + store._store.Count);
             var coll = result.Result as ConfigCollection;
@@ -104,9 +100,7 @@ namespace heitech.configXt.TraceBullet
 
             var context = new CommandContext(CommandTypes.UpdateValue, changeRequest, store);
 
-            IRunConfigOperation operation = Factory.CreateOperation(context);
-            OperationResult result = await operation.ExecuteAsync();
-            
+            var result = await Factory.RunOperationAsync(context);
             return result;
         }
 
@@ -119,9 +113,7 @@ namespace heitech.configXt.TraceBullet
             };
             var context = new CommandContext(CommandTypes.Create, changeRequest, store);
 
-            IRunConfigOperation operation = Factory.CreateOperation(context);
-            OperationResult result = await operation.ExecuteAsync();
-            
+            OperationResult result = await Factory.RunOperationAsync(context);
             return result;
         }
 
@@ -130,12 +122,11 @@ namespace heitech.configXt.TraceBullet
             var changeRequest = new ConfigChangeRequest
             {
                 Name = "ConnectionString",
-                Value = null
+                Value = "null"
             };
             var context = new CommandContext(CommandTypes.Delete, changeRequest, store);
 
-            IRunConfigOperation operation = Factory.CreateOperation(context);
-            OperationResult result = await operation.ExecuteAsync();
+            OperationResult result  = await Factory.RunOperationAsync(context);
 
             var queryResult = await ReadConfigEntityInMemory("ConnectionString", store);
             if (queryResult.IsSuccess == false)

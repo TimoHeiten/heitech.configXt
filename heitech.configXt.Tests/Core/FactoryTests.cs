@@ -1,11 +1,9 @@
-using System;
-using System.Linq;
 using heitech.configXt.Core;
 using Xunit;
 using NSubstitute;
 using heitech.configXt.Core.Queries;
-using heitech.configXt.Core.Operation;
 using heitech.configXt.Core.Commands;
+using System.Threading.Tasks;
 
 namespace heitech.configXt.Tests.Core
 {
@@ -14,30 +12,12 @@ namespace heitech.configXt.Tests.Core
 
         private IStorageModel _model = Substitute.For<IStorageModel>();
         [Fact]
-        public void ConfigurationContextDerivedFailsToYieldAnOperation()
+        public async Task ConfigurationContextDerivedFailsToYieldAnOperation()
         {
             var ctx = new FakeContext(_model);
-            var result = Factory.CreateOperation(ctx);
+            var result = await Factory.RunOperationAsync(ctx);
 
-            Assert.IsType<RunConfigNullOperation>(result);
-        }
-
-        [Fact]
-        public void QueryContextReturnsQueryConfiguration()
-        {
-            var ctx = new QueryContext("query", QueryTypes.AllValues, _model);
-            var result = Factory.CreateOperation(ctx);
-
-            Assert.IsType<RunQueryConfigOperation>(result);
-        }
-
-        [Fact]
-        public void CommandContextReturnsCommandConfiguration()
-        {
-             var ctx = new CommandContext(CommandTypes.Create, new ConfigChangeRequest() { Name = "", Value = "" }, _model);
-            var result = Factory.CreateOperation(ctx);
-
-            Assert.IsType<RunCommandConfigOperation>(result);
+            Assert.False(result.IsSuccess);
         }
 
         private class FakeContext : ConfigurationContext
