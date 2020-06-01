@@ -4,7 +4,6 @@ namespace heitech.configXt.Core.Commands
     {
         Create,
         UpdateValue,
-        UpdateRights,
         Delete
     }
 
