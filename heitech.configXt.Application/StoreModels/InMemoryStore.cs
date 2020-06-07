@@ -10,7 +10,7 @@ namespace heitech.configXt.Application
 {
     public class InMemoryStore : IStorageModel
     {
-        private readonly Dictionary<string, ConfigEntity> _entities = new Dictionary<string, ConfigEntity>();
+        protected readonly Dictionary<string, ConfigEntity> _entities = new Dictionary<string, ConfigEntity>();
 
         public Task<IEnumerable<ConfigEntity>> AllEntitesAsync()
         {

@@ -16,5 +16,8 @@ namespace heitech.configXt.Core
         Task<bool> StoreEntityAsync(ConfigEntity entity);
 
         Task<IEnumerable<ConfigEntity>> AllEntitesAsync();
+
+
+        // todo need unit of work here
     }
 }
