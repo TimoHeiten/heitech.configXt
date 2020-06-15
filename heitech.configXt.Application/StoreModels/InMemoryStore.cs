@@ -60,7 +60,7 @@ namespace heitech.configXt.Application
                     else
                         return result(false);
                 default:
-                    throw new NotSupportedException();
+                    throw new NotSupportedException(entity.CrudOperationName + " was not found...");
             }
         }
     }

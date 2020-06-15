@@ -6,6 +6,9 @@ using heitech.configXt.Core.Entities;
 
 namespace heitech.configXt.Application.UseCases
 {
+    ///<summary>
+    /// Not done yet -> todo
+    ///</summary>
     public class UploadFileAsync : IUseCase
     {
         private readonly string _json;
@@ -20,9 +23,6 @@ namespace heitech.configXt.Application.UseCases
             _json = json;
         }
 
-        ///<summary>
-        /// set value to null explicitly to initiate delete
-        ///</summary>
         public async Task<OperationResult> RunUseCaseAsync()
         {
             OperationResult transformed = _transform.Transform(_json);

@@ -3,6 +3,9 @@ using Newtonsoft.Json;
 
 namespace heitech.configXt.Application
 {
+    ///<summary>
+    /// Token helper methods for shorter token checks
+    ///</summary>
     public static class Tokens
     {
         public static bool IsStartObject(this JsonToken token) => token == JsonToken.StartObject;

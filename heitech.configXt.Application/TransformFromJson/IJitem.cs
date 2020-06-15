@@ -3,6 +3,9 @@ using heitech.configXt.Core.Entities;
 
 namespace heitech.configXt.Application
 {
+    ///<summary>
+    /// Interface for the Reverse Construction
+    ///</summary>
     public interface IJitem
     {
         string Name { get; }
