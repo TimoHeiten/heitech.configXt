@@ -1,13 +1,14 @@
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using heitech.configXt.Core.Commands;
 using heitech.configXt.Core.Entities;
 
 namespace heitech.configXt.Core
 {
     public interface IStorageModel
     {
+        ///<summary>
+        /// GetConfigEntity by name 
+        ///</summary>
         Task<ConfigEntity> GetEntityByNameAsync(string byName);
         
         ///<summary>
@@ -15,9 +16,9 @@ namespace heitech.configXt.Core
         ///</summary>
         Task<bool> StoreEntityAsync(ConfigEntity entity);
 
+        ///<summary>
+        /// Return IEnumerable of Entities 
+        ///</summary>
         Task<IEnumerable<ConfigEntity>> AllEntitesAsync();
-
-
-        // todo need unit of work here
     }
 }

@@ -6,6 +6,9 @@ namespace heitech.configXt.Core
 {
     internal static class SanityChecks
     {
+        ///<summary>
+        /// Check Null with method name
+        ///</summary>
         internal static void CheckNull<T>(T obj, string methodName)
             where T : class
         {
@@ -15,21 +18,33 @@ namespace heitech.configXt.Core
             }
         }
 
+        ///<summary>
+        /// OperationResult.Failure BadRequest
+        ///</summary>
         internal static OperationResult NotSupported(string fullName, string methodName)
         {
             return OperationResult.Failure(ResultType.BadRequest, methodName);
         }
 
+        ///<summary>
+        /// OperationResult.Failure NotFound
+        ///</summary>
         internal static OperationResult NotFound(string name, string v)
         {
             return OperationResult.Failure(ResultType.NotFound, v);
         }
 
+        ///<summary>
+        /// OperationResult.Failure Forbidden
+        ///</summary>
         internal static OperationResult StorageFailed<T>(string operation, string v)
         {
             return OperationResult.Failure(ResultType.Forbidden, v);
         }
 
+        ///<summary>
+        /// Throws if expected and actual are not the same string.
+        ///</summary>
         internal static void IsSameOperationType(string expected, string actual)
         {
             if (expected != actual)

@@ -1,7 +1,8 @@
-using heitech.configXt.Core.Entities;
-
 namespace heitech.configXt.Core.Commands
 {
+    ///<summary>
+    /// CommandContext Subtype for ConfigurationContext
+    ///</summary>
     public class CommandContext : ConfigurationContext
     {
         public ConfigChangeRequest ChangeRequest { get; }

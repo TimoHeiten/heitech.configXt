@@ -8,6 +8,9 @@ namespace heitech.configXt.Core.Queries
 {
     internal static class AllQueries
     {
+        ///<summary>
+        /// Actual Query to get Data from the StorageModel
+        ///</summary>
         internal static async Task<OperationResult> QueryConfigEntityAsync(QueryContext context)
         {
             string methName = $"{nameof(AllQueries)}.{nameof(QueryConfigEntityAsync)}";
@@ -25,6 +28,9 @@ namespace heitech.configXt.Core.Queries
             return OperationResult.Success(config);
         }
 
+        ///<summary>
+        /// Actual Query for all Config Entities using the StorageModel.
+        ///</summary>
         internal static async Task<OperationResult> QueryAllConfigEntityValuesAsync(QueryContext context)
         {
             string methName = $"{nameof(AllQueries)}.{nameof(QueryConfigEntityAsync)}";

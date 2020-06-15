@@ -8,6 +8,10 @@ namespace heitech.configXt.Core
 {
     public class Factory
     {
+        ///<summary>
+        /// Run the configEntity Crud operation with respect to the Context type.
+        ///  Returns an OperationResult of Type ConfigEntity
+        ///</summary>
         public static async Task<OperationResult> RunOperationAsync(ConfigurationContext context)
         {
             string methName = nameof(RunOperationAsync);

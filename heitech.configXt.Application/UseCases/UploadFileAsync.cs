@@ -45,7 +45,11 @@ namespace heitech.configXt.Application.UseCases
             }
             else
             {
-                return OperationResult.Failure(ResultType.InternalError, $"expected typeof({typeof(ConfigCollection)}) but got {transformed.Result.GetType()}");
+                return OperationResult.Failure
+                (
+                    ResultType.InternalError, 
+                    $"expected typeof({typeof(ConfigCollection)}) but got {transformed.Result.GetType()}"
+                );
             }
 
             return OperationResult.Success(collection);

@@ -18,18 +18,23 @@ namespace heitech.configXt.Core.Commands
         }
 
         #region Create
+        ///<summary>
+        /// Actual Crud.Create Command using the CommandContext and the StorageEngine
+        ///</summary>
         internal static async Task<OperationResult> CreateAsync(CommandContext context)
         {
             string methName = $"{nameof(AllCommands)}.{nameof(CreateAsync)}";
             SanityChecks.CheckNull(context, methName);
             SanityChecks.IsSameOperationType(CommandTypes.Create.ToString(), context.CommandType.ToString());
 
+            // create a new entity from key and value
             var entity = GenerateConfigEntityFromChangeRequest(context.ChangeRequest);
 
             bool success = false;
             entity.CrudOperationName = CommandTypes.Create;
-            success = await context.StorageEngine.StoreEntityAsync(entity);
 
+            // try store
+            success = await context.StorageEngine.StoreEntityAsync(entity);
             if (!success)
             {
                 return SanityChecks.StorageFailed<ConfigEntity>(context.CommandType.ToString(), methName);
@@ -40,6 +45,9 @@ namespace heitech.configXt.Core.Commands
         #endregion
 
         #region Update
+        ///<summary>
+        /// Actual Crud.Update method using CommandContext and StorageEngine
+        ///</summary>
         internal static async Task<OperationResult> UpdateAsync(CommandContext context)
         {
             string methName = $"{nameof(AllCommands)}.{nameof(UpdateAsync)}";
@@ -56,6 +64,9 @@ namespace heitech.configXt.Core.Commands
         }
         #endregion
 
+        ///<summary>
+        /// Actual Crud.Delete method using CommandContext and StorageEngine
+        ///</summary>
         internal static async Task<OperationResult> DeleteAsync(CommandContext context)
         {
             string methName = $"{nameof(AllCommands)}.{nameof(DeleteAsync)}";
@@ -85,13 +96,14 @@ namespace heitech.configXt.Core.Commands
                     ThrowError = () => SanityChecks.NotFound(context.ConfigName, initiatingMethod)
                 };
             }
+            // for diff checking
             var before = new ConfigEntity
             {
                 Id = config.Id,
                 Name = new string(config.Name.ToCharArray()),
                 Value = new string(config.Value.ToCharArray())
             };
-
+            // callback for entity
             config = adjustEntity(config);
 
             config.CrudOperationName = storeType;
@@ -100,7 +112,11 @@ namespace heitech.configXt.Core.Commands
             {
                 return new ConfigEntityResult
                 {
-                    ThrowError = () =>  SanityChecks.StorageFailed<ConfigEntity>(context.CommandType.ToString(), initiatingMethod),
+                    ThrowError = () =>  SanityChecks.StorageFailed<ConfigEntity>
+                    (
+                        context.CommandType.ToString(), 
+                        initiatingMethod
+                    ),
                     Success = false
                 };
             }
