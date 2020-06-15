@@ -1,24 +1,12 @@
-#r "nuget: Newtonsoft.Json, 12.0.1"
+using System.Collections.Generic;
 
-// using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
-var json = File.ReadAllText
-(
-    Path.Combine(Environment.CurrentDirectory, "config-test.json")
-);
+var queue = new Queue<int>();
 
-// var reader = new JsonTextReader(new StringReader(json));
-// while (reader.Read())
-// {
-//     if (reader.Value != null)
-//     {
-//         Console.WriteLine("Token: {0}, Value: {1}", reader.TokenType, reader.Value);
-//     }
-//     else
-//     {
-//         Console.WriteLine("Token: {0}", reader.TokenType);
-//     }
-// }
+queue.Enqueue(1);
+queue.Enqueue(2);
+queue.Enqueue(3);
+queue.Enqueue(4);
 
-// solve with state machine!
+var list = queue.ToList();
+System.Console.WriteLine(string.Join(":", list));

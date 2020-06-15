@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\heitech.configXt.Core\heitech.configXt.Core.csproj" />
+    <ProjectReference Include="..\heitech.configXt.Application\heitech.configXt.Application.csproj" />
   </ItemGroup>
 
   <PropertyGroup>
@@ -9,4 +10,9 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
+<ItemGroup>
+    <Content Include="./config.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+</ItemGroup>
 </Project>

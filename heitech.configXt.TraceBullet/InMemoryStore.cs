@@ -30,13 +30,12 @@ namespace heitech.configXt.TraceBullet
             {
                 var result = _store.SingleOrDefault(x => x.Id == entity.Id);
                 result.Value = (entity as ConfigEntity).Value;
+
                 return Task.FromResult(true);
             }
             else if (entity.CrudOperationName == CommandTypes.Delete)
             {
-                System.Console.WriteLine("remove it pls");
                 _store.Remove(entity as ConfigEntity);
-                System.Console.WriteLine("store count after delete: -" + _store.Count);
                 return Task.FromResult(true);
             }
 
@@ -45,9 +44,7 @@ namespace heitech.configXt.TraceBullet
                 return Task.FromResult(false);
             }
 
-            System.Console.WriteLine("storing config entity");
             _store.Add(entity as ConfigEntity);
-            System.Console.WriteLine(_store.Count);
             bool stored = true;
             return Task.FromResult(stored);
         }
