@@ -14,13 +14,13 @@ namespace heitech.configXt.Application
         public JsonTransform()
         { }
 
-        public OperationResult ToJson(IEnumerable<ConfigEntity> entities)
+        public OperationResult Format(IEnumerable<ConfigEntity> entities)
         {
             var obj =  BackTransform.Transform(entities);
             return OperationResult.Success(obj);
         }
 
-        public OperationResult Transform(string inputString)
+        public OperationResult Parse(string inputString)
         {
             _json = inputString;
             var result = ReadDocument();

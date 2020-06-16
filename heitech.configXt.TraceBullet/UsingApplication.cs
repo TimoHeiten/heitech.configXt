@@ -23,7 +23,7 @@ namespace heitech.configXt.TraceBullet
             string json = JsonFromConfigFile();
             ITransform transform = new JsonTransform();
 
-            OperationResult result = transform.Transform(json);
+            OperationResult result = transform.Parse(json);
             if (result.Result is ConfigCollection collection)
             {
                 foreach (var item in collection.WrappedConfigEntities)

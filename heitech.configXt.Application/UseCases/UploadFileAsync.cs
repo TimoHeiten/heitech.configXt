@@ -25,7 +25,7 @@ namespace heitech.configXt.Application.UseCases
 
         public async Task<OperationResult> RunUseCaseAsync()
         {
-            OperationResult transformed = _transform.Transform(_json);
+            OperationResult transformed = _transform.Parse(_json);
             if (transformed.IsSuccess == false)
             {
                 return transformed;

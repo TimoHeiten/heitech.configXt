@@ -26,7 +26,7 @@ namespace heitech.configXt.Tests.Application
 
             var transform = new JsonTransform();
 
-            var result = transform.Transform(json);
+            var result = transform.Parse(json);
             var collection = (result.Result as ConfigCollection).WrappedConfigEntities;
 
             Assertion(collection, "Simple", "Value", 0);
@@ -49,7 +49,7 @@ namespace heitech.configXt.Tests.Application
 
             var transform = new JsonTransform();
 
-            var result = transform.Transform(json);
+            var result = transform.Parse(json);
             var collection = (result.Result as ConfigCollection).WrappedConfigEntities;
 
             Assertion(collection, "Simple", "Value", 0);
@@ -88,7 +88,7 @@ namespace heitech.configXt.Tests.Application
 
             var transform = new JsonTransform();
 
-            var result = transform.Transform(json);
+            var result = transform.Parse(json);
             var collection = (result.Result as ConfigCollection).WrappedConfigEntities;
 
             Assertion(collection, "Simple", "Value", 0);
@@ -120,7 +120,7 @@ namespace heitech.configXt.Tests.Application
 
         //     var transform = new JsonTransform(_model);
 
-        //     var result = transform.Transform(json);
+        //     var result = transform.Parse(json);
         //     var collection = (result.Result as ConfigCollection).WrappedConfigEntities;
 
         //     Assertion(collection, "Object:Nested:Array", "1,2,3,4", 0);
@@ -148,7 +148,7 @@ namespace heitech.configXt.Tests.Application
 
         //     var transform = new JsonTransform(_model);
 
-        //     var result = transform.Transform(json);
+        //     var result = transform.Parse(json);
         //     var collection = (result.Result as ConfigCollection).WrappedConfigEntities;
 
         //     Assertion(collection, "Array:Key-1", "Value-1", 0);
@@ -177,7 +177,7 @@ namespace heitech.configXt.Tests.Application
 
         //     var transform = new JsonTransform(_model);
 
-        //     var result = transform.Transform(json);
+        //     var result = transform.Parse(json);
         //     var collection = (result.Result as ConfigCollection).WrappedConfigEntities;
 
         //     Assertion(collection, "Array:Key-1", "1,2,3,4", 0);

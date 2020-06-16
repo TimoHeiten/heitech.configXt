@@ -26,10 +26,10 @@ namespace heitech.configXt.Tests.Application
 
             var transform = new JsonTransform();
 
-            var result = transform.Transform(json);
+            var result = transform.Parse(json);
             var collection = (result.Result as ConfigCollection).WrappedConfigEntities;
 
-            OperationResult opResult = transform.ToJson(collection);
+            OperationResult opResult = transform.Format(collection);
             var jsonEntity = opResult.Result as ConfigEntityJson;
             Assert.NotNull(jsonEntity);
 

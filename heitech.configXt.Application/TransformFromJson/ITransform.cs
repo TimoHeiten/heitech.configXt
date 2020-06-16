@@ -9,7 +9,7 @@ namespace heitech.configXt.Application
     ///</summary>
     public interface ITransform
     {
-        OperationResult Transform(string inputString);
-        OperationResult ToJson(IEnumerable<ConfigEntity> entities);
+        OperationResult Parse(string inputString);
+        OperationResult Format(IEnumerable<ConfigEntity> entities);
     }
 }
