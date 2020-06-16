@@ -1,7 +1,5 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using heitech.configXt.Application;
 using heitech.configXt.Core;
@@ -15,7 +13,7 @@ namespace heitech.configXt.TraceBullet
     {
         ///<summary>
         /// load simple json file
-        /// save to inmemory store 
+        /// save to in Memory store 
         /// and load all and print to console
         ///</summary>
         public static async Task Run(Action<object> printCallback)

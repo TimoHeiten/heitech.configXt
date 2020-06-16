@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "heitech.configXt.Tests", "h
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "heitech.configXt.Application", "heitech.configXt.Application\heitech.configXt.Application.csproj", "{1661B8DE-F0A3-43B0-8BEA-88382C3E6383}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "heitech.configXt.Cli", "heitech.configXt.Cli\heitech.configXt.Cli.csproj", "{D2747CCD-57BF-4093-9482-F8C6311F16E9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -72,5 +74,17 @@ Global
 		{1661B8DE-F0A3-43B0-8BEA-88382C3E6383}.Release|x64.Build.0 = Release|Any CPU
 		{1661B8DE-F0A3-43B0-8BEA-88382C3E6383}.Release|x86.ActiveCfg = Release|Any CPU
 		{1661B8DE-F0A3-43B0-8BEA-88382C3E6383}.Release|x86.Build.0 = Release|Any CPU
+		{D2747CCD-57BF-4093-9482-F8C6311F16E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D2747CCD-57BF-4093-9482-F8C6311F16E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D2747CCD-57BF-4093-9482-F8C6311F16E9}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{D2747CCD-57BF-4093-9482-F8C6311F16E9}.Debug|x64.Build.0 = Debug|Any CPU
+		{D2747CCD-57BF-4093-9482-F8C6311F16E9}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D2747CCD-57BF-4093-9482-F8C6311F16E9}.Debug|x86.Build.0 = Debug|Any CPU
+		{D2747CCD-57BF-4093-9482-F8C6311F16E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D2747CCD-57BF-4093-9482-F8C6311F16E9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D2747CCD-57BF-4093-9482-F8C6311F16E9}.Release|x64.ActiveCfg = Release|Any CPU
+		{D2747CCD-57BF-4093-9482-F8C6311F16E9}.Release|x64.Build.0 = Release|Any CPU
+		{D2747CCD-57BF-4093-9482-F8C6311F16E9}.Release|x86.ActiveCfg = Release|Any CPU
+		{D2747CCD-57BF-4093-9482-F8C6311F16E9}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
