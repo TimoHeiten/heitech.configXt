@@ -23,46 +23,16 @@ namespace heitech.configXt.Application
         public OperationResult Parse(string inputString)
         {
             _json = inputString;
-            var result = ReadDocument();
-
-
-            var _stack = new Stack<Combi>();
-            result.Select(x => new Combi(x.Item1, x.Item2))
-                  .Reverse()
-                  .ToList()
-                  .ForEach(x => _stack.Push(x));
-
-            var entities = JsRoot.Run(_stack);
+            var working = new WorkingTransform();
+            working.Parse(new JsonTextReader(new StringReader(_json)));
+            var entities = working.Yield();
 
             var collection = new ConfigCollection();
             collection.WrappedConfigEntities = entities;
 
-
             return OperationResult.Success(collection);
         }
 
-        private List<(JsonToken token, object value)> ReadDocument()
-        {
-            var reader = new JsonTextReader(new StringReader(_json));
-            var list = new List<(JsonToken, object)>();
-            while (reader.Read())
-            {
-                // reader.TokenType, reader.Value
-                list.Add((reader.TokenType, reader.Value));
-            }
-            return list;
-        }
-    }
-
-    public class Combi 
-    {
-        public string Value { get; }
-        public JsonToken Token { get; }
-        public Combi(JsonToken token, object o)
-        {
-            Token = token;
-            Value = o == null ? null : o.ToString();
-        }
     }
 }
 

@@ -20,13 +20,13 @@ namespace heitech.configXt.Core
         ///<summary>
         /// Crud.Delete Context
         ///</summary>
-        public static ConfigurationContext DeleteContext(this IStorageModel model, string _for, string _with)
+        public static ConfigurationContext DeleteContext(this IStorageModel model, string _for, string _with = "")
             =>  _Create(CommandTypes.Delete, model, (_for, _with));
 
         ///<summary>
         /// Crud.Delete Context
         ///</summary>
-        public static ConfigurationContext QueryOne(this IStorageModel model, string _for, string _with)
+        public static ConfigurationContext QueryOne(this IStorageModel model, string _for)
         {
             return new QueryContext(_for, QueryTypes.ValueRequest, model);
         }
@@ -34,7 +34,7 @@ namespace heitech.configXt.Core
         ///<summary>
         /// Crud.Delete Context
         ///</summary>
-        public static ConfigurationContext QueryAll(this IStorageModel model, string _for, string _with)
+        public static ConfigurationContext QueryAll(this IStorageModel model, string _for)
         {
             return new QueryContext(_for, QueryTypes.AllValues, model);
         }

@@ -14,10 +14,8 @@ namespace heitech.configXt.Application.UseCases
         private readonly string _json;
         private readonly IStorageModel _model;
         private readonly ITransform _transform;
-        private readonly IUseCase _storeUseCase;
-        public UploadFileAsync(string json, ITransform transform, IStorageModel model, IUseCase storeUseCase)
+        public UploadFileAsync(string json, ITransform transform, IStorageModel model)
         {
-            _storeUseCase = storeUseCase;
             _transform = transform;
             _model = model;
             _json = json;
@@ -26,6 +24,7 @@ namespace heitech.configXt.Application.UseCases
         public async Task<OperationResult> RunUseCaseAsync()
         {
             OperationResult transformed = _transform.Parse(_json);
+            System.Console.WriteLine("transformation was successful: [" + transformed.IsSuccess + "]");
             if (transformed.IsSuccess == false)
             {
                 return transformed;

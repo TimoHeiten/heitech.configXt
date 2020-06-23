@@ -1,18 +1,19 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <ItemGroup>
-    <ProjectReference Include="..\heitech.configXt.Core\heitech.configXt.Core.csproj" />
-    <ProjectReference Include="..\heitech.configXt.Application\heitech.configXt.Application.csproj" />
+    <ProjectReference Include="..\heitech.configXt.Core\heitech.configXt.Core.csproj"/>
+    <ProjectReference Include="..\heitech.configXt.Application\heitech.configXt.Application.csproj"/>
+    <ProjectReference Include="..\heitech.configXt.Models\heitech.configXt.Models.csproj"/>
   </ItemGroup>
-
+  <ItemGroup>
+    <Content Include="./config.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="NetMQ" Version="4.0.0.207"/>
+  </ItemGroup>
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
-
-<ItemGroup>
-    <Content Include="./config.json">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-</ItemGroup>
 </Project>
