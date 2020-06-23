@@ -20,5 +20,10 @@ namespace heitech.configXt.Models
         /// Which operation should be performed
         ///</summary>
         public ContextType Type { get; set; }
+
+        ///<summary>
+        /// AppName for which the config is set
+        ///</summary>
+        public string AppName { get; set; }
     }
 }

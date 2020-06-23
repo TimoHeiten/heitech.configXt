@@ -25,7 +25,8 @@ namespace heitech.configXt.TraceBullet
                 Value = "",
                 Key = "RabbitMQ:Host",
                 Type = ContextType.ReadEntry,
-                User = new AuthModel("timoheiten@t-heiten.net", "configXt-Admin!")
+                User = new AuthModel("timoheiten@t-heiten.net", "configXt-Admin!"),
+                AppName = "test-app-1"
             };
             using (var socket = new RequestSocket())
             {
@@ -37,7 +38,17 @@ namespace heitech.configXt.TraceBullet
                 // send wrong context 
                 RequestReceiveLog(new FailureObject());
                 // upload
-                RequestReceiveLog(new ContextModel() { User = readContext.User, Type = ContextType.UploadAFile, Key ="Json", Value = json});
+                RequestReceiveLog
+                (
+                    new ContextModel() 
+                    {
+                         User = readContext.User,  
+                         Type = ContextType.UploadAFile, 
+                         Key ="Json", 
+                         Value = json,
+                         AppName = "test-app-1"
+                    }
+                );
                 // create new value
                 // get
                 var result = RequestReceiveLog(readContext);
@@ -49,10 +60,15 @@ namespace heitech.configXt.TraceBullet
                     Value = "my-Host",
                     Key = "RabbitMQ:Host",
                     Type = ContextType.UpdateEntry,
-                    User = new AuthModel("timoheiten@t-heiten.net", "configXt-Admin!")
+                    User = new AuthModel("timoheiten@t-heiten.net", "configXt-Admin!"),
+                    AppName = "test-app-1"
                 };
                 RequestReceiveLog(updateContext);
                 result = RequestReceiveLog(readContext);
+
+                // auth not allowed
+                readContext.AppName = "app-test-2";
+                RequestReceiveLog(readContext);
 
                 // delete the created value
                 var deleteContext = new ContextModel
@@ -60,7 +76,8 @@ namespace heitech.configXt.TraceBullet
                     Value = "",
                     Key = "RabbitMQ:Host",
                     Type = ContextType.DeleteEntry,
-                    User = new AuthModel("timoheiten@t-heiten.net", "configXt-Admin!")
+                    User = new AuthModel("timoheiten@t-heiten.net", "configXt-Admin!"),
+                    AppName = "test-app-1"
                 };
                 RequestReceiveLog(deleteContext);
  
@@ -70,10 +87,12 @@ namespace heitech.configXt.TraceBullet
                     Key = "",
                     Value = "",
                     Type = ContextType.ReadAllEntries,
-                    User = new AuthModel("timoheiten@t-heiten.net", "configXt-Admin!")
+                    User = new AuthModel("timoheiten@t-heiten.net", "configXt-Admin!"),
+                    AppName = "test-app-1"
                 };
                 var uiResult = RequestReceiveLog(allCtxt);
                 System.Console.WriteLine(string.Join("\n", uiResult.ConfigurationModels.Select(x => x.Name)));
+
             }
             log("-".PadRight(50, '-'));
             log("finished");

@@ -22,6 +22,27 @@ namespace heitech.configXt.Application
 
         public async Task<OperationResult> Run(ContextModel model)
         {
+            // check is allowed
+            bool isAllowed = true;
+            string access = "write";
+            if (model.Type == ContextType.ReadEntry || model.Type == ContextType.ReadAllEntries)
+            {
+                access = "read";
+                isAllowed =  await _model.IsAllowedReadAsync(model.User, model.AppName);
+            }
+            else
+            {
+                isAllowed = await _model.IsAllowedWriteAsync(model.User, model.AppName);
+            }
+            if (!isAllowed)
+            {
+                return OperationResult.Failure
+                (
+                    ResultType.Forbidden,
+                    $"Not allowed: Access [{access}] with AuthModel.Name [{model.User.Name}] and AppName [{model.AppName}]"
+                );
+            }
+
             switch (model.Type)
             {
                 case ContextType.CreateEntry:

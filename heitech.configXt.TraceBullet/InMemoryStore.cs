@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using heitech.configXt.Core;
 using heitech.configXt.Core.Commands;
 using heitech.configXt.Core.Entities;
+using heitech.configXt.Models;
 
 namespace heitech.configXt.TraceBullet
 {
@@ -22,6 +23,16 @@ namespace heitech.configXt.TraceBullet
         {
             var config = _store.FirstOrDefault(x => x.Name == byName);
             return Task.FromResult(config);
+        }
+
+        public Task<bool> IsAllowedReadAsync(AuthModel authModel, string appName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> IsAllowedWriteAsync(AuthModel authModel, string appName)
+        {
+            throw new NotImplementedException();
         }
 
         public Task<bool> StoreEntityAsync(ConfigEntity entity)

@@ -1,4 +1,5 @@
 using heitech.configXt.Core;
+using heitech.configXt.Models;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace heitech.configXt.Application.Components
@@ -8,9 +9,10 @@ namespace heitech.configXt.Application.Components
         ///<summary>
         /// Create an InMemory Store that uses Microsoft.Extensions.DependencyInjection for a MemoryStore Instance
         ///</summary>
-        public static IServiceCollection InMemoryStore(this IServiceCollection services)
+        public static IServiceCollection InMemoryStore(this IServiceCollection services, string initialAdminName, string pw, string appName = "testAdmin")
         {
-            services.AddSingleton<IStorageModel>(new InMemoryStore());
+            string hash = PasswordHasher.GenerateHash(pw);
+            services.AddSingleton<IStorageModel>(new InMemoryStore(initialAdminName, hash, appName));
             return services;
         }
     }

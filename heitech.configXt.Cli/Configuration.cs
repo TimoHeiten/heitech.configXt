@@ -9,6 +9,11 @@ namespace heitech.configXt.Cli
         public const string TCP_MQ = "tcp://localhost:5557";
         public const string INTERACT_DEFAULT = "Memory";
         public const string STORAGE_DEFAULT = "Memory";
+
+        public string AdminPassword { get; set; }
+        public string AdminName { get; set; }
+        public string InitialAppName { get; set; }
+
         private Configuration() { }
         public static Configuration Parse()
         {

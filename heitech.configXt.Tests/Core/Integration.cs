@@ -6,6 +6,7 @@ using heitech.configXt.Core;
 using heitech.configXt.Core.Commands;
 using heitech.configXt.Core.Entities;
 using heitech.configXt.Core.Queries;
+using heitech.configXt.Models;
 using Xunit;
 
 namespace heitech.configXt.Tests.Core
@@ -32,6 +33,16 @@ namespace heitech.configXt.Tests.Core
                 return _entity != null && _entity.Name == byName
                        ? Task.FromResult(_entity)
                        : Task.FromResult<ConfigEntity>(null);
+            }
+
+            public Task<bool> IsAllowedReadAsync(AuthModel authModel, string appName)
+            {
+                throw new NotImplementedException();
+            }
+
+            public Task<bool> IsAllowedWriteAsync(AuthModel authModel, string appName)
+            {
+                throw new NotImplementedException();
             }
 
             public Task<bool> StoreEntityAsync(ConfigEntity entity)

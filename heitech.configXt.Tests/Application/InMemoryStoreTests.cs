@@ -14,7 +14,7 @@ namespace heitech.configXt.Tests.Application
         private const string FOUND = "found";
         private const string OTHER = "other";
         private const string NOT_FOUND = "not-found";
-        private readonly Spy _store = new Spy();
+        private readonly Spy _store = new Spy("AdminName", "pwHash", "app-1");
 
         public InMemoryStoreTests()
         {
@@ -139,6 +139,10 @@ namespace heitech.configXt.Tests.Application
 
         public class Spy : InMemoryStore
         {
+            public Spy(string name, string passwordHash, string appName) 
+                : base(name, passwordHash, appName)
+            { }
+
             public Dictionary<string, ConfigEntity> Entities => _entities;
         }
     }

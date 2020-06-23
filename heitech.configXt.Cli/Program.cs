@@ -55,7 +55,7 @@ namespace heitech.configXt.Cli
                     throw new InvalidOperationException($"input: {contextModel} ain`t no ContextModel");
                 }
 
-                var result = await _interact.Run(model);
+                OperationResult result = await _interact.Run(model);
 
                 return FromOperationResult(result);
             }
@@ -110,7 +110,12 @@ namespace heitech.configXt.Cli
 
         private static IStorageModel StorageFromConfig(Configuration configuration)
         {
-            return new InMemoryStore();
+            return new InMemoryStore
+            (
+                configuration.AdminName, 
+                configuration.AdminPassword, 
+                configuration.InitialAppName)
+            ;
         }
 
         private static void Log(object o)
