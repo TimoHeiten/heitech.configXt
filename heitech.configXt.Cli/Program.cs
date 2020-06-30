@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using heitech.configXt.Application;
-using heitech.configXt.Core;
-using heitech.configXt.Core.Entities;
 using heitech.configXt.Models;
-using NetMQ;
-using NetMQ.Sockets;
 using Newtonsoft.Json;
 
 namespace heitech.configXt.Cli
@@ -24,83 +19,18 @@ namespace heitech.configXt.Cli
             System.Console.WriteLine("Starting to connect");
             _log = args.Contains("log") || args.Contains("l");
             // todo run in memory config for this service too
-            using (var responseSocket = new ResponseSocket())
+            var config = Configuration.Parse();
+            var bus = new ResponseBus(config.ZeroMQTcp);
+            using (bus)
             {
-                var config = Configuration.Parse();
-                responseSocket.Bind(config.ZeroMQTcp);
+                bus.Connect();
                 _interact = InteractFromConfig(config);
                 while (true)
                 {
                     Log("running loop");
-                    UiOperationResult uiResult = await LoopAsync(responseSocket, config);
-                    var json = JsonConvert.SerializeObject(uiResult);
-                    Log("returning result - issuccess:" + uiResult.IsSuccess);
-                    responseSocket.SendFrame(json);
+                    await bus.RespondAsync(async (model) => await _interact.Run(model));
                 }
             }
-        }
-
-        private static async Task<UiOperationResult> LoopAsync(ResponseSocket socket, Configuration config)
-        {
-            try
-            {
-                // todo check if one can handle multiple concurrent requests on same socket? or do we need thread dispatching here
-                var contextModel = socket.ReceiveFrameString();
-                Log($"received: {contextModel}");
-
-                ContextModel model = JsonConvert.DeserializeObject<ContextModel>(contextModel);
-                Log($"model is null {model == null}");
-                if (model.User == null)
-                {
-                    throw new InvalidOperationException($"input: {contextModel} ain`t no ContextModel");
-                }
-
-                OperationResult result = await _interact.Run(model);
-
-                return FromOperationResult(result);
-            }
-            catch (System.Exception ex)
-            {
-                var oR = OperationResult.Failure
-                (
-                    ResultType.BadRequest,
-                    $"could not parse contextModel: {ex.Message}"
-                );
-                return FromOperationResult(oR);
-            }
-        }
-
-        private static UiOperationResult FromOperationResult(OperationResult result)
-        {
-            ConfigEntity entity = result.Result;
-            var models = new List<ConfigurationModel>();
-            if (entity != null)
-            {
-                if (entity is ConfigCollection collection)
-                {
-                    models = collection.WrappedConfigEntities
-                                                    .Select(x => new ConfigurationModel { Name = x.Name, Value = x.Value })
-                                                    .ToList();
-                }
-                else
-                {
-                    models.Add
-                    (
-                        new ConfigurationModel 
-                        { 
-                            Name = entity.Name, 
-                            Value = entity.Value 
-                        }
-                    );
-                }
-            }
-            return new UiOperationResult
-            (
-                success: result.IsSuccess,
-                resultType: result.ResultType.ToString(),
-                errorMessage: result.ErrorMessage,
-                model: models
-            );
         }
 
         private static IInteract InteractFromConfig(Configuration config)

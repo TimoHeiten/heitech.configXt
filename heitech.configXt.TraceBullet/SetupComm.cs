@@ -21,8 +21,8 @@ namespace heitech.configXt.TraceBullet
 
             OperationResult result = transform.Parse(json);
 
-            var socket = new RequestSocket();
-            socket.Connect(tcpConnection);
+            var socket = new RequestBus(tcpConnection);
+            socket.Connect();
 
             return new Communication
             {
@@ -45,7 +45,7 @@ namespace heitech.configXt.TraceBullet
     {
         public IStorageModel Storage { get; set; }
         public ITransform Transform { get; set; }
-        public RequestSocket Socket { get; set; }
+        public IRequestBus Socket { get; set; }
         public ConfigCollection ConfigEntities { get; set; }
         public string JsonString { get; set; }
     }

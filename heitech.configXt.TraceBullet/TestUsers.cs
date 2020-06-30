@@ -13,7 +13,7 @@ namespace heitech.configXt.TraceBullet
         /// Add a User, update a user, get a user, remove a user 
         /// all with the cli interaction 
         ///</summary>
-        public static Task Run(Action<object> printCallback)
+        public static async Task Run(Action<object> printCallback)
         {
             var log = printCallback;
             var comm = SetupComm.GetCommunication("tcp://localhost:5557");
@@ -37,32 +37,35 @@ namespace heitech.configXt.TraceBullet
                 Type = ContextType.AddUser
             };
 
+            string[] expected = Enumerable.Repeat("Success", 3).Append("No Success").ToArray();
+            System.Console.WriteLine("-".PadRight(50, '-'));
+            System.Console.WriteLine("expected:\n" + string.Join("\n", expected));
+            System.Console.WriteLine("-".PadRight(50, '-'));
+
             using (comm.Socket)
             {
-                UiOperationResult uiResult = InteractCli.RequestReceiveLog(model, comm.Socket, log);
+                UiOperationResult uiResult = await InteractCli.RequestReceiveLog(model, comm.Socket, log);
                 System.Console.WriteLine("AddUser was: " + (uiResult.IsSuccess ? "Success" : "No Success"));
 
                 model.Type = ContextType.GetUser;
-                uiResult = InteractCli.RequestReceiveLog(model, comm.Socket, log);
+                uiResult = await InteractCli.RequestReceiveLog(model, comm.Socket, log);
                 System.Console.WriteLine("GetUser was: " + (uiResult.IsSuccess ? "Success" : "No Success"));
 
                 model.Type = ContextType.UpdateUser;
                 var list = model.AppClaims.ToList();
                 list.Add(new AppClaimModel { ApplicationName = "App-2", ConfigEntitiyKey = "Simple", CanRead = true, CanWrite = true });
                 model.AppClaims = list.ToArray();
-                uiResult = InteractCli.RequestReceiveLog(model, comm.Socket, log);
+                uiResult = await InteractCli.RequestReceiveLog(model, comm.Socket, log);
                 System.Console.WriteLine("UpdateUser was: " + (uiResult.IsSuccess ? "Success" : "No Success"));
 
                 model.Type = ContextType.DeleteUser;
-                uiResult = InteractCli.RequestReceiveLog(model, comm.Socket, log);
+                uiResult = await InteractCli.RequestReceiveLog(model, comm.Socket, log);
                 System.Console.WriteLine("DeleteUser was: " + (uiResult.IsSuccess ? "Success" : "No Success"));
 
                 model.Type = ContextType.GetUser;
-                uiResult = InteractCli.RequestReceiveLog(model, comm.Socket, log);
+                uiResult = await InteractCli.RequestReceiveLog(model, comm.Socket, log);
                 System.Console.WriteLine("GetUser after Delete was: " + (uiResult.IsSuccess ? "Success" : "No Success"));
             }
-
-            return Task.CompletedTask;
         }
     }
 }
