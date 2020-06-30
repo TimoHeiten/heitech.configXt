@@ -9,7 +9,7 @@ using heitech.configXt.Models;
 
 namespace heitech.configXt.Application
 {
-    public class InMemoryStore : IStorageModel
+    public class InMemoryStore : IStorageModel, IAuthStorageModel
     {
         protected readonly Dictionary<string, ConfigEntity> _entities = new Dictionary<string, ConfigEntity>();
         protected readonly List<UserEntity> _models = new List<UserEntity>();
@@ -53,17 +53,39 @@ namespace heitech.configXt.Application
         }
 
         public Task<bool> IsAllowedReadAsync(AuthModel authModel, string appName)
-            => Task.FromResult(Result(authModel, appName, claim => claim.CanRead));
+            => Task.FromResult
+            (
+                CheckAppClaimFromUser
+                (
+                    authModel, 
+                    appName, 
+                    claim => claim.CanRead
+                )
+            );
         public Task<bool> IsAllowedWriteAsync(AuthModel authModel, string appName)
-            => Task.FromResult(Result(authModel, appName, claim => claim.CanWrite));
+            => Task.FromResult
+            (
+                CheckAppClaimFromUser
+                (
+                    authModel, 
+                    appName, 
+                    claim => claim.CanWrite
+                )
+            );
 
-        private bool Result(AuthModel authModel, string appName, Predicate<ApplicationClaim> claim)
+        private bool CheckAppClaimFromUser(AuthModel authModel, string appName, Predicate<ApplicationClaim> claim)
         {
             bool result = false;
-            bool has = _models.Any(x => x.Name == authModel.Name && x.PasswordHash == authModel.PasswordHash);
-            if (has)
+            bool hasAuthModel = _models.Any
+            (
+                x => x.Name == authModel.Name 
+                    && x.PasswordHash == authModel.PasswordHash
+            );
+            if (hasAuthModel)
             {
-                result = _models.First(x => x.Name == authModel.Name).Claims.Any(x => x.Name == appName && claim(x));
+                result = _models.First(x => x.Name == authModel.Name)
+                                .Claims
+                                .Any(x => x.Name == appName && claim(x));
             }
             return result;
         }
@@ -90,7 +112,9 @@ namespace heitech.configXt.Application
                         return result(true);
                     }
                     else
+                    {
                         return result(false);
+                    }
                 case CommandTypes.Delete:
                     if (_entities.TryGetValue(entity.Name, out ConfigEntity eDelete))
                     {
@@ -98,10 +122,60 @@ namespace heitech.configXt.Application
                         return result(true);
                     }
                     else
+                    {
                         return result(false);
+                    }
                 default:
                     throw new NotSupportedException(entity.CrudOperationName + " was not found...");
             }
+        }
+
+        public Task StoreUserAsync(AuthModel model, ApplicationClaim[] claims)
+        {
+            var entity = _models.FirstOrDefault(x => x.Name == model.Name);
+            if (entity == null)
+            {
+                _models.Add
+                (
+                    new UserEntity
+                    {
+                        Name = model.Name,
+                        Id = Guid.NewGuid(),
+                        Claims = claims.ToList(),
+                        PasswordHash = model.PasswordHash
+                    }
+                );
+            }
+            else 
+            {
+                entity.PasswordHash = model.PasswordHash;
+                entity.Claims.AddRange(claims);
+            }
+            return Task.CompletedTask;
+        }
+
+        public Task<bool> UserExistsAsync(AuthModel model)
+        {
+            bool result = _models.Any(x => x.Name == model.Name && model.PasswordHash == x.PasswordHash);
+            return Task.FromResult(result);
+        }
+
+        public Task<UserEntity> GetUserAsync(AuthModel model)
+        {
+            var user = _models.FirstOrDefault(x => x.Name == model.Name && x.PasswordHash == model.PasswordHash);
+
+            return Task.FromResult(user);
+        }
+
+        public async Task<bool> DeleteUserAsync(AuthModel model)
+        {
+            var user = await GetUserAsync(model);
+            if (user != null)
+            {
+                _models.RemoveAll(x => x.Name == model.Name);
+                return true;
+            }
+            else return false;
         }
     }
 }

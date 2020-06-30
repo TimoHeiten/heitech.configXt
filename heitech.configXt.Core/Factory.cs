@@ -42,6 +42,18 @@ namespace heitech.configXt.Core
                     );
                 }
             }
+            else if (context is UserContext userContext)
+            {
+                var commandType = userContext.Type;
+                if (commandType.HasValue == false)
+                {
+                    return await _userActions["query"](userContext);
+                }
+                else
+                {
+                    return await _userActions[commandType.Value.ToString()](userContext);
+                }
+            }
             else
             {
                 return OperationResult.Failure
@@ -65,6 +77,15 @@ namespace heitech.configXt.Core
             {
                 [QueryTypes.ValueRequest] = async ctx => await AllQueries.QueryConfigEntityAsync(ctx),
                 [QueryTypes.AllValues] = async ctx => await AllQueries.QueryAllConfigEntityValuesAsync(ctx),
+            };
+
+        private static readonly Dictionary<string, Func<UserContext, Task<OperationResult>>> _userActions = 
+            new Dictionary<string, Func<UserContext, Task<OperationResult>>>
+            {
+                ["query"] = UserOperations.GetAsync,
+                [nameof(CommandTypes.Create)] = UserOperations.StoreUserAsync,
+                [nameof(CommandTypes.UpdateValue)] = UserOperations.StoreUserAsync,
+                [nameof(CommandTypes.Delete)] = UserOperations.DeleteAsync
             };
     }
 }

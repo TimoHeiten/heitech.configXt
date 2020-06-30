@@ -105,10 +105,10 @@ namespace heitech.configXt.Cli
 
         private static IInteract InteractFromConfig(Configuration config)
         {
-            return new MemoryInteract(StorageFromConfig(config));
+            InMemoryStore store = StorageFromConfig(config);
+            return new MemoryInteract(store, store);
         }
-
-        private static IStorageModel StorageFromConfig(Configuration configuration)
+        private static InMemoryStore StorageFromConfig(Configuration configuration)
         {
             return new InMemoryStore
             (

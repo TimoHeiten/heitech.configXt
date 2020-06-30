@@ -9,7 +9,7 @@ namespace heitech.configXt.TraceBullet
     {
         static Task Main(string[] args)
         {
-            string key = args.Any() == false ? "Usage" : args.FirstOrDefault();
+            string key = args.Any() == false ? "usage" : args.FirstOrDefault();
             Func<Action<object>, Task> bullet = _map[key];
 
             return bullet(Print);
@@ -17,9 +17,10 @@ namespace heitech.configXt.TraceBullet
 
         static Program()
         {
-            _map.Add("TestStorage", a => TestStorageAndGeneralFlow.Run(a));
-            _map.Add("Usage", a => UsingApplication.Run(a));
-            _map.Add("Cli", a => InteractCli.Run(a));
+            _map.Add("test-storage", a => TestStorageAndGeneralFlow.Run(a));
+            _map.Add("usage", a => UsingApplication.Run(a));
+            _map.Add("cli", a => InteractCli.Run(a));
+            _map.Add("users", a => TestUsers.Run(a));
         }
 
         public static void Print(object o)

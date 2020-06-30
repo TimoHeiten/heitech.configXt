@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using heitech.configXt.Core.Entities;
 using Newtonsoft.Json;
@@ -18,9 +17,6 @@ namespace heitech.configXt.Application
         private readonly List<ConfigEntity> _entities = new List<ConfigEntity>();
 
         public IEnumerable<ConfigEntity> Yield() => _entities;
-
-        private JsonTextReader _reader;
-
         public void Parse(JsonTextReader reader)
         {
             _data.Clear();

@@ -13,6 +13,7 @@ namespace heitech.configXt.Models
 
 
         AddUser,
+        GetUser,
         DeleteUser,
         UpdateUser
     }

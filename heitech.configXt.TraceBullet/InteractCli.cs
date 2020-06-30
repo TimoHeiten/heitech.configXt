@@ -11,14 +11,9 @@ namespace heitech.configXt.TraceBullet
 {
     public class InteractCli
     {
-        static Action<object> _log;
-        static RequestSocket _socket;
         public static Task Run(Action<object> log)
         {
-            _log = log;
-            var path = System.IO.Path.Combine(Environment.CurrentDirectory, "config.json");
-            var json =  File.ReadAllText(path);
-            log(string.Format("json is :\n{0}", json));
+            var comm = SetupComm.GetCommunication("tcp://localhost:5557");
             // without upload is error on get
             var readContext = new ContextModel
             {
@@ -28,15 +23,13 @@ namespace heitech.configXt.TraceBullet
                 User = new AuthModel("timoheiten@t-heiten.net", "configXt-Admin!"),
                 AppName = "test-app-1"
             };
-            using (var socket = new RequestSocket())
+            using (comm.Socket)
             {
-                socket.Connect("tcp://localhost:5557");
-                _socket = socket;
                 // todo prio2 check if socket is available for easier testing
                 // send
-                RequestReceiveLog(readContext);
+                RequestReceiveLog(readContext, comm.Socket, log);
                 // send wrong context 
-                RequestReceiveLog(new FailureObject());
+                RequestReceiveLog(new FailureObject(), comm.Socket, log);
                 // upload
                 RequestReceiveLog
                 (
@@ -45,13 +38,15 @@ namespace heitech.configXt.TraceBullet
                          User = readContext.User,  
                          Type = ContextType.UploadAFile, 
                          Key ="Json", 
-                         Value = json,
+                         Value = comm.JsonString,
                          AppName = "test-app-1"
-                    }
+                    }, 
+                    comm.Socket, 
+                    log
                 );
                 // create new value
                 // get
-                var result = RequestReceiveLog(readContext);
+                var result = RequestReceiveLog(readContext, comm.Socket, log);
 
                 // get all values including the new one
                 // update the created value
@@ -63,12 +58,12 @@ namespace heitech.configXt.TraceBullet
                     User = new AuthModel("timoheiten@t-heiten.net", "configXt-Admin!"),
                     AppName = "test-app-1"
                 };
-                RequestReceiveLog(updateContext);
-                result = RequestReceiveLog(readContext);
+                RequestReceiveLog(updateContext, comm.Socket, log);
+                result = RequestReceiveLog(readContext, comm.Socket, log);
 
                 // auth not allowed
                 readContext.AppName = "app-test-2";
-                RequestReceiveLog(readContext);
+                RequestReceiveLog(readContext, comm.Socket, log);
 
                 // delete the created value
                 var deleteContext = new ContextModel
@@ -79,7 +74,7 @@ namespace heitech.configXt.TraceBullet
                     User = new AuthModel("timoheiten@t-heiten.net", "configXt-Admin!"),
                     AppName = "test-app-1"
                 };
-                RequestReceiveLog(deleteContext);
+                RequestReceiveLog(deleteContext, comm.Socket, log);
  
                 // get all values
                 var allCtxt = new ContextModel
@@ -90,7 +85,7 @@ namespace heitech.configXt.TraceBullet
                     User = new AuthModel("timoheiten@t-heiten.net", "configXt-Admin!"),
                     AppName = "test-app-1"
                 };
-                var uiResult = RequestReceiveLog(allCtxt);
+                var uiResult = RequestReceiveLog(allCtxt, comm.Socket, log);
                 System.Console.WriteLine(string.Join("\n", uiResult.ConfigurationModels.Select(x => x.Name)));
 
             }
@@ -101,7 +96,7 @@ namespace heitech.configXt.TraceBullet
 
         public class FailureObject { }
 
-        private static UiOperationResult RequestReceiveLog<T>(T model)
+        public static UiOperationResult RequestReceiveLog<T>(T model, RequestSocket _socket, Action<object> _log)
         {
             System.Console.WriteLine("send model - Type: [" + typeof(T).Name + "]");
             _socket.SendFrame(JsonConvert.SerializeObject(model));

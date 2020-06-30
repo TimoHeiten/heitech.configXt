@@ -8,6 +8,11 @@ namespace heitech.configXt.Models
         public AuthModel User { get; set; }
 
         ///<summary>
+        /// Specify all the applications this user can use. Should only be used if creating or updating a User is required
+        ///</summary>
+        public AppClaimModel[] AppClaims { get; set; }
+
+        ///<summary>
         /// The Key of the ConfigurationEntry. Must be Null on ContextType Read All. In Upload this needs to be a parseable Indicator (Json, csv etc.)
         ///</summary>
         public string Key { get; set; }

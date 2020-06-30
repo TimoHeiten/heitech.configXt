@@ -9,9 +9,12 @@ namespace heitech.configXt.Application
     public class MemoryInteract : IInteract
     {
         private readonly IStorageModel _model;
-        public MemoryInteract(IStorageModel model)
+        private readonly IAuthStorageModel _authStorage;
+
+        public MemoryInteract(IStorageModel model, IAuthStorageModel authStorage)
         {
             _model = model;
+            _authStorage = authStorage;
         }
 
         public Task<OperationResult> DownloadAs(string indicator)
@@ -25,7 +28,14 @@ namespace heitech.configXt.Application
             // check is allowed
             bool isAllowed = true;
             string access = "write";
-            if (model.Type == ContextType.ReadEntry || model.Type == ContextType.ReadAllEntries)
+            if (model.Type == ContextType.AddUser 
+               || model.Type == ContextType.DeleteUser 
+               || model.Type == ContextType.UpdateUser
+               || model.Type == ContextType.GetUser)
+            {
+                isAllowed = true;
+            }
+            else if (model.Type == ContextType.ReadEntry || model.Type == ContextType.ReadAllEntries)
             {
                 access = "read";
                 isAllowed =  await _model.IsAllowedReadAsync(model.User, model.AppName);
@@ -43,23 +53,45 @@ namespace heitech.configXt.Application
                 );
             }
 
+            ConfigurationContext ctxt;
             switch (model.Type)
             {
+            // Commands
                 case ContextType.CreateEntry:
-                    return await Factory.RunOperationAsync(_model.CreateContext(model.Key, model.Value));
-                case ContextType.ReadEntry:
-                    return await Factory.RunOperationAsync(_model.QueryOne(model.Key));
-                case ContextType.ReadAllEntries:
-                    return await Factory.RunOperationAsync(_model.QueryAll(model.Key));
+                    ctxt = _model.CreateContext(model.Key, model.Value);
+                    return await Factory.RunOperationAsync(ctxt);
                 case ContextType.UpdateEntry:
-                    return await Factory.RunOperationAsync(_model.UpdateContext(model.Key, model.Value));
+                    ctxt = _model.UpdateContext(model.Key, model.Value);
+                    return await Factory.RunOperationAsync(ctxt);
                 case ContextType.DeleteEntry:
-                    return await Factory.RunOperationAsync(_model.DeleteContext(model.Key));
+                    ctxt = _model.DeleteContext(model.Key);
+                    return await Factory.RunOperationAsync(ctxt);
+            // Queries
+                case ContextType.ReadEntry:
+                    ctxt = _model.QueryOne(model.Key);
+                    return await Factory.RunOperationAsync(ctxt);
+                case ContextType.ReadAllEntries:
+                    ctxt = _model.QueryAll(model.Key);
+                    return await Factory.RunOperationAsync(ctxt);
+            // Import / Export
                 case ContextType.DownloadAsFile:
                     return await DownloadAs(model.Key);
                 case ContextType.UploadAFile:
                     var result = await Upload(model.Value, model.Key);
                     return result;
+            // User Operations
+                case ContextType.AddUser:
+                    ctxt = _model.CreateUserContext(model.User, _authStorage, model.AppClaims);
+                    return await Factory.RunOperationAsync(ctxt);
+                case ContextType.UpdateUser:
+                    ctxt = _model.UpdateUserContext(model.User, _authStorage, model.AppClaims);
+                    return await Factory.RunOperationAsync(ctxt);
+                case ContextType.DeleteUser:
+                    ctxt = _model.DeleteUserContext(model.User, _authStorage);
+                    return await Factory.RunOperationAsync(ctxt);
+                case ContextType.GetUser:
+                    ctxt = _model.ReadUserContext(model.User, _authStorage);
+                    return await Factory.RunOperationAsync(ctxt);
                 default:
                     throw new NotSupportedException($"model.contextType : [{model.Type.ToString()}] is not supported");
             }
