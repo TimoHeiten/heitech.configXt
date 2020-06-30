@@ -1,9 +1,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using NetMQ;
 using heitech.configXt.Models;
-using System.Text;
 
 namespace heitech.configXt.TraceBullet
 {
