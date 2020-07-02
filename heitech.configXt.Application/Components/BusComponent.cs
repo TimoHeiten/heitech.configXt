@@ -1,6 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 
-namespace heitech.configXt.Application
+namespace heitech.configXt.Application.Components
 {
     public static class BusComponent
     {

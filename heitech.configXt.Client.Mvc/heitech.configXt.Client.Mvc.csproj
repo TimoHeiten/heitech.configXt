@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <ItemGroup>
+    <ProjectReference Include="..\heitech.configXt.Application\heitech.configXt.Application.csproj" />
+    <ProjectReference Include="..\heitech.configXt.Core\heitech.configXt.Core.csproj" />
+    <ProjectReference Include="..\heitech.configXt.Models\heitech.configXt.Models.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+</Project>

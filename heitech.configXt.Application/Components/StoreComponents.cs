@@ -12,7 +12,9 @@ namespace heitech.configXt.Application.Components
         public static IServiceCollection InMemoryStore(this IServiceCollection services, string initialAdminName, string pw, string appName = "testAdmin")
         {
             string hash = PasswordHasher.GenerateHash(pw);
-            services.AddSingleton<IStorageModel>(new InMemoryStore(initialAdminName, hash, appName));
+            var store = new InMemoryStore(initialAdminName, hash, appName);
+            services.AddSingleton<IStorageModel>(store);
+            services.AddSingleton<IAuthStorageModel>(store);
             return services;
         }
     }
