@@ -6,3 +6,7 @@ obj
 packages
 .vscode
 todo
+
+heitech.configXt.Client.Nodejs/node_modules
+**/node_modules
+*node_modules 

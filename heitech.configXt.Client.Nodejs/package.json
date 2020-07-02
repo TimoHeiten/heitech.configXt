@@ -1,0 +1,20 @@
+{
+  "name": "heitech.configXt.Client.Nodejs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "loop.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "inquirer": "^6.3.1",
+    "zeromq": "^5.2.0"
+  },
+  "devDependencies": {
+    "@types/inquirer": "^6.5.0",
+    "@types/zeromq": "^4.6.3"
+  }
+}
