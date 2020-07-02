@@ -1,6 +1,6 @@
 {
     "ZeroMQTcp" : "tcp://localhost:5557",
-    "AdminName" : "timoheiten@t-heiten.net",
-    "AdminPassword" : "configXt-Admin!",
+    "AdminName" : "timoh",
+    "AdminPassword" : "admin123",
     "InitialAppName" : "test-app-1"
 }

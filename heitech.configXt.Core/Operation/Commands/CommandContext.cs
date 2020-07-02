@@ -12,12 +12,12 @@ namespace heitech.configXt.Core.Commands
             : base(model)
         {
             CommandType = types;
-            Check(changeRequest);
-            Check(changeRequest.Name);
-            Check(changeRequest.Value);
+            Check(changeRequest, "changeRequest");
+            Check(changeRequest.Name, "changeRequest.Name");
+            Check(changeRequest.Value, "changeRequest.Value");
 
             ChangeRequest = changeRequest;
-            ConfigName = ChangeRequest.Name;
+            ConfigurationEntryKey = ChangeRequest.Name;
         }
     }
 }

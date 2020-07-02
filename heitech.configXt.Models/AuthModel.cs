@@ -12,10 +12,16 @@ namespace heitech.configXt.Models
         public AuthModel(string name, string password)
         {
             Name = name;
-            PasswordHash = PasswordHasher.GenerateHash(password);
+            Password = password;
+            passwordHash = PasswordHasher.GenerateHash(password);
         }
         public string Name { get; set; }
-        public string PasswordHash { get; set; }
+        private string passwordHash = null;
+        public string PasswordHash 
+        {
+            get => passwordHash ?? PasswordHasher.GenerateHash(Password);
+        }
+        public string Password { get; set; }
 
         ///<summary>
         ///Create the AuthModel by name and hash of a user entity
@@ -25,7 +31,7 @@ namespace heitech.configXt.Models
             return new AuthModel
             {
                 Name = name,
-                PasswordHash = hash
+                passwordHash = hash
             };
         } 
     }

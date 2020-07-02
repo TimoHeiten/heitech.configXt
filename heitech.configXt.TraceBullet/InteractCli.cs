@@ -12,6 +12,8 @@ namespace heitech.configXt.TraceBullet
 {
     public class InteractCli
     {
+        const string userName = "timoh";
+        const string pw = "admin123";
         public static async Task Run(Action<object> log)
         {
             var comm = SetupComm.GetCommunication("tcp://localhost:5557");
@@ -21,7 +23,7 @@ namespace heitech.configXt.TraceBullet
                 Value = "",
                 Key = "RabbitMQ:Host",
                 Type = ContextType.ReadEntry,
-                User = new AuthModel("timoheiten@t-heiten.net", "configXt-Admin!"),
+                User = new AuthModel(userName, pw),
                 AppName = "test-app-1"
             };
 
@@ -88,7 +90,7 @@ namespace heitech.configXt.TraceBullet
                     Value = "",
                     Key = "RabbitMQ:Host",
                     Type = ContextType.DeleteEntry,
-                    User = new AuthModel("timoheiten@t-heiten.net", "configXt-Admin!"),
+                    User = new AuthModel(userName, pw),
                     AppName = "test-app-1"
                 };
                 await RequestReceiveLog(deleteContext, comm.Socket, log);
@@ -99,7 +101,7 @@ namespace heitech.configXt.TraceBullet
                     Key = "",
                     Value = "",
                     Type = ContextType.ReadAllEntries,
-                    User = new AuthModel("timoheiten@t-heiten.net", "configXt-Admin!"),
+                    User = new AuthModel(userName, pw),
                     AppName = "test-app-1"
                 };
                 var uiResult = await RequestReceiveLog(allCtxt, comm.Socket, log);

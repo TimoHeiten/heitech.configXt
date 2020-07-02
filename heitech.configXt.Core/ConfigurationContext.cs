@@ -8,7 +8,10 @@ namespace heitech.configXt.Core
     public class ConfigurationContext
     {
         private string _configName;
-        public string ConfigName 
+        ///<summary>
+        /// The Key of the ConfigurationEntry in question
+        ///</summary>
+        public string ConfigurationEntryKey 
         { 
             get
             {
@@ -16,7 +19,7 @@ namespace heitech.configXt.Core
             }
             set
             {
-                Check(value);
+                Check(value, "configurationEntry");
                 _configName = value;
             } 
         }
@@ -24,11 +27,16 @@ namespace heitech.configXt.Core
         /// Access to the StorageEngine
         ///</summary>
         public IStorageModel StorageEngine { get; }
-        protected Action<object> Check = o => SanityChecks.CheckNull(o, $"ctor + [{nameof(ConfigurationContext)}]");
         protected ConfigurationContext(IStorageModel model)
         {
-            Check(model);;
+            Check(model, "model");
             StorageEngine = model;
+        }
+
+        protected void Check<T>(T item, string paramName)
+            where T : class
+        {
+            SanityChecks.CheckNull(item, $"ctor + [{nameof(ConfigurationContext)}]", paramName);
         }
     }
 }

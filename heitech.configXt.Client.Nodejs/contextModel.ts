@@ -50,30 +50,67 @@ function updateUserContext() : ContextModel{
 
 // --------------------- context for config entities------------------------------------------------------
 
-function createEntityContext() : ContextModel{
+function createEntityContext(key : string, value: string, user: AuthModel, appName: string) : ContextModel{
     let model = new ContextModel();
-
+    model.type = ContextType.CreateEntry;
+    model.key = key;
+    model.value = value;
+    model.user = user;
+    model.appName = appName;
 
     return model;
 }
 
-function getAllEntitiesContext() : ContextModel{
+export function getAllEntitiesContext(user: AuthModel, appName: string) : ContextModel{
     let model = new ContextModel();
-    
+    model.type = ContextType.ReadAllEntries;
+    model.user = user;
+    model.appName = appName;
+    model.key = "must-not-be-null-but-also-not-important";
 
     return model;
 }
 
-function getEntityContext() : ContextModel{
+export function getEntityContext(key : string, user: AuthModel, appName: string) : ContextModel{
     let model = new ContextModel();
-    
+    model.type = ContextType.ReadEntry;
+    model.key = key;
+    model.user = user;
+    model.appName = appName;
 
     return model;
 }
 
-function updateEntityContext() : ContextModel{
+function updateEntityContext(key : string, value: string, user: AuthModel, appName: string) : ContextModel{
     let model = new ContextModel();
-    
+    model.type = ContextType.UpdateEntry;
+    model.key = key;
+    model.value = value;
+    model.user = user;
+    model.appName = appName;
+
+    return model;
+}
+
+export function uploadFile(user : AuthModel, appName: string) : ContextModel{
+    let model = new ContextModel();
+    // todo input for this instead of hardcoded 
+    model.value = JSON.stringify({
+            "Connections" : {
+                "MySql" : "server=localhost;user=root;pwd=root;port=3307",
+                "Sqlite" : "./my-db.db"
+            },
+            "RabbitMQ" : {
+                "Host" : "localhost",
+                "Port" : "5672",
+                "User" : "guest",
+                "Password" : "guest"
+        }
+    });
+    model.key = "json";
+    model.user = user;
+    model.type = ContextType.UploadAFile;
+    model.appName = appName;
 
     return model;
 }

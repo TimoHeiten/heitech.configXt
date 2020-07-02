@@ -87,13 +87,13 @@ namespace heitech.configXt.Core.Commands
         private static async Task<ConfigEntityResult> TryExtractConfigEntityAsync(string initiatingMethod, CommandContext context, CommandTypes storeType, Func<ConfigEntity, ConfigEntity> adjustEntity)
         {
             // get config entity if exists
-            var config = await context.StorageEngine.GetEntityByNameAsync(context.ConfigName);
+            var config = await context.StorageEngine.GetEntityByNameAsync(context.ConfigurationEntryKey);
             if (config == null)
             {
                 return new ConfigEntityResult
                 {
                     Success = false,
-                    ThrowError = () => SanityChecks.NotFound(context.ConfigName, initiatingMethod)
+                    ThrowError = () => SanityChecks.NotFound(context.ConfigurationEntryKey, initiatingMethod)
                 };
             }
             // for diff checking

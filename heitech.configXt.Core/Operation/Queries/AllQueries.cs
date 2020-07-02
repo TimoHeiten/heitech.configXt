@@ -14,14 +14,14 @@ namespace heitech.configXt.Core.Queries
         internal static async Task<OperationResult> QueryConfigEntityAsync(QueryContext context)
         {
             string methName = $"{nameof(AllQueries)}.{nameof(QueryConfigEntityAsync)}";
-            SanityChecks.CheckNull(context, methName);
+            SanityChecks.CheckNull(context, methName, "QueryContext");
             SanityChecks.IsSameOperationType(QueryTypes.ValueRequest.ToString(), context.QueryType.ToString());
 
             // check if exists
-            var config = await context.StorageEngine.GetEntityByNameAsync(context.ConfigName);
+            var config = await context.StorageEngine.GetEntityByNameAsync(context.ConfigurationEntryKey);
             if (config == null)
             {
-                return SanityChecks.NotFound(context.ConfigName, methName);
+                return SanityChecks.NotFound(context.ConfigurationEntryKey, methName);
             }
 
             // return entity
@@ -34,14 +34,14 @@ namespace heitech.configXt.Core.Queries
         internal static async Task<OperationResult> QueryAllConfigEntityValuesAsync(QueryContext context)
         {
             string methName = $"{nameof(AllQueries)}.{nameof(QueryConfigEntityAsync)}";
-            SanityChecks.CheckNull(context, methName);
+            SanityChecks.CheckNull(context, methName, "QueryContext");
             SanityChecks.IsSameOperationType(QueryTypes.AllValues.ToString(), context.QueryType.ToString());
 
             // check if exists
             var configs = await context.StorageEngine.AllEntitesAsync();
             if (configs == null || configs.Any() == false)
             {
-                return SanityChecks.NotFound(context.ConfigName, methName);
+                return SanityChecks.NotFound(context.ConfigurationEntryKey, methName);
             }
 
             // return entity

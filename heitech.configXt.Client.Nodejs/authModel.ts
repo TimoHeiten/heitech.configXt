@@ -4,6 +4,10 @@ export class AuthModel
     constructor(public name : string, public password : string){
 
     }
+
+    toString() : string{
+        return `${this.name}-${this.password}`;
+    }
 }
 
 export class AppClaim

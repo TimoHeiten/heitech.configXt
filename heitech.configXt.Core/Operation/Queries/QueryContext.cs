@@ -12,7 +12,7 @@ namespace heitech.configXt.Core.Queries
             : base(model)
         {
             QueryType = types;
-            ConfigName = queryName;
+            ConfigurationEntryKey = queryName;
         }
     }
 }

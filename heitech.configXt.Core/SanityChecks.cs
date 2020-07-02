@@ -9,12 +9,12 @@ namespace heitech.configXt.Core
         ///<summary>
         /// Check Null with method name
         ///</summary>
-        internal static void CheckNull<T>(T obj, string methodName)
+        internal static void CheckNull<T>(T obj, string methodName, string paramName = "not-specified")
             where T : class
         {
             if (obj == null)
             {
-                throw new ArgumentException($"in method: [{methodName}] the argument of type [{typeof(T)}] was unexpectedly null!");
+                throw new ArgumentException($"in method: [{methodName}] the argument of type [{typeof(T)}] and paramName [{paramName}] was unexpectedly null!");
             }
         }
 

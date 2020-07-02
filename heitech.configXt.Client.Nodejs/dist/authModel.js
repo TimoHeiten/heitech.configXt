@@ -6,6 +6,9 @@ class AuthModel {
         this.name = name;
         this.password = password;
     }
+    toString() {
+        return `${this.name}-${this.password}`;
+    }
 }
 exports.AuthModel = AuthModel;
 class AppClaim {
