@@ -18,6 +18,14 @@ namespace heitech.configXt.Application
             _connection = connection;
         }
 
+        public Task InitAsync()
+        {
+            using (var c = CreateNewContext())
+            {
+                return c.Database.MigrateAsync();
+            }
+        }
+
         private PersistContext CreateNewContext()
         {
             return new PersistContext()

@@ -22,27 +22,38 @@ namespace heitech.configXt.Cli
             using (bus)
             {
                 bus.Connect();
-                _interact = InteractFromConfig(config);
+                _interact = await CreateInteractAsync(config);
                 while (true)
                 {
-                    Log("running loop");
-                    await bus.RespondAsync(async (model) => await _interact.Run(model));
+                    Log("awaiting the next contextModel");
+                    await bus.RespondAsync
+                    (
+                        async (model) => 
+                        {
+                            Log($"incoming model:\nUserName:[{model.User?.Name}]\nType:[{model.Type}]\nKey:[{model.Key}]\nValue:[{model.Value}]\nAppName:[{model.AppName}]");
+                            OperationResult result = await _interact.Run(model);
+                            Log($"result is:\nresult.Success[{result.IsSuccess}]\nresult.Type[{result.ResultType}]");
+
+                            return result;
+                        }
+                    );
                 }
             }
         }
 
-        private static IInteract InteractFromConfig(Configuration config)
+        private static async Task<IInteract> CreateInteractAsync(Configuration config)
         {
-            var (store, authStore) = StorageFromConfig(config);
+            var (store, authStore) = await StorageFromConfig(config);
             return new MemoryInteract(store, authStore);
         }
 
-        private static (IStorageModel, IAuthStorageModel) StorageFromConfig(Configuration configuration)
+        private static async Task<(IStorageModel, IAuthStorageModel)> StorageFromConfig(Configuration configuration)
         {
             if (configuration.StorageModel.Equals("persistent", StringComparison.InvariantCultureIgnoreCase))
             {
                 Log("using ef store with sqlite and location:  " + configuration.StorageLocation);
                 var persist = new EfStore(configuration.StorageLocation);
+                await persist.InitAsync();
                 return (persist, persist);
             }
 
