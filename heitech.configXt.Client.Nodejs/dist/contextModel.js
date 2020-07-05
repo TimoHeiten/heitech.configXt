@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.uploadFile = exports.getEntityContext = exports.getAllEntitiesContext = exports.createUserContext = exports.ContextModel = void 0;
+exports.uploadFile = exports.updateEntityContext = exports.getEntityContext = exports.getAllEntitiesContext = exports.createEntityContext = exports.getUserContext = exports.createUserContext = exports.ContextModel = void 0;
 const authModel_1 = require("./authModel");
 const contextType_1 = require("./contextType");
 class ContextModel {
@@ -20,6 +20,7 @@ function getUserContext() {
     let model = new ContextModel();
     return model;
 }
+exports.getUserContext = getUserContext;
 function deleteUserContext() {
     let model = new ContextModel();
     return model;
@@ -38,6 +39,7 @@ function createEntityContext(key, value, user, appName) {
     model.appName = appName;
     return model;
 }
+exports.createEntityContext = createEntityContext;
 function getAllEntitiesContext(user, appName) {
     let model = new ContextModel();
     model.type = contextType_1.ContextType.ReadAllEntries;
@@ -65,6 +67,7 @@ function updateEntityContext(key, value, user, appName) {
     model.appName = appName;
     return model;
 }
+exports.updateEntityContext = updateEntityContext;
 function uploadFile(user, appName) {
     let model = new ContextModel();
     // todo input for this instead of hardcoded 

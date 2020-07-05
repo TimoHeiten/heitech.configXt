@@ -10,6 +10,9 @@ export declare class ContextModel {
     constructor();
 }
 export declare function createUserContext(user: string, password: string, entity: string, appName: string): ContextModel;
+export declare function getUserContext(): ContextModel;
+export declare function createEntityContext(key: string, value: string, user: AuthModel, appName: string): ContextModel;
 export declare function getAllEntitiesContext(user: AuthModel, appName: string): ContextModel;
 export declare function getEntityContext(key: string, user: AuthModel, appName: string): ContextModel;
+export declare function updateEntityContext(key: string, value: string, user: AuthModel, appName: string): ContextModel;
 export declare function uploadFile(user: AuthModel, appName: string): ContextModel;

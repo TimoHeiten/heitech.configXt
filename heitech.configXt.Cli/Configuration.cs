@@ -39,7 +39,7 @@ namespace heitech.configXt.Cli
         public string ZeroMQTcp { get; set; }
 
         public string InteractType { get; set; }
-        public string StorageModel { get; set; }
+        public string StorageModel { get; set; } = STORAGE_DEFAULT;
         public string StorageLocation { get; set; }
     }
 }

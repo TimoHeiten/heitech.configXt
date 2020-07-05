@@ -1,39 +1,15 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.selectUseCase = void 0;
 const inq = require("inquirer");
-const mq = require("zeromq");
-const contextModel_1 = require("./contextModel");
-const uiOperationResult_1 = require("./uiOperationResult");
 const authModel_1 = require("./authModel");
-const tcpConnect = "tcp://localhost:5557";
+const commands_1 = require("./commands");
+const entityCrud_1 = require("./entityCrud");
+const fs_1 = require("fs");
+const credentials = JSON.parse(fs_1.readFileSync("./src/config.json", 'utf8'));
 // todo: config file for admin, user and app name
-function busSend(context) {
-    let socket = mq.socket('req');
-    socket.connect(tcpConnect);
-    socket.on('message', function (msg) {
-        let result = JSON.parse(msg.toString());
-        let uiResult = uiOperationResult_1.UiOperationResult.FromMsg(result);
-        console.log(uiResult.format());
-        selectUseCase(context.appName, context.user);
-    });
-    socket.send(JSON.stringify(context));
-}
-var Commands;
-(function (Commands) {
-    Commands["Login"] = "Login-As";
-    Commands["Quit"] = "Quit";
-    Commands["GetEntry"] = "GetEntry";
-    Commands["UpdateEntry"] = "UpdateEntry";
-    Commands["CreateEntry"] = "CreateEntry";
-    Commands["GetAllEntries"] = "GetAllEntries";
-    Commands["AddUser"] = "AddUser";
-    Commands["GetUser"] = "GetUser";
-    Commands["UpdateUser"] = "UpdateUser";
-    Commands["DeleteUser"] = "DeleteUser";
-    Commands["Upload"] = "upload-data";
-    Commands["Download"] = "download-data";
-})(Commands || (Commands = {}));
-async function run() {
+// main to run the loop
+async function main() {
     console.clear();
     let user;
     let key;
@@ -43,46 +19,43 @@ async function run() {
         message: "input User: [appName] [userName] [password]"
     }).then(answer => {
         let cmd = answer['add'];
-        let _input = cmd.split(' ');
-        user = new authModel_1.AuthModel(_input[1], _input[2]);
-        key = _input[0];
-        return user;
+        if (cmd === '') {
+            key = credentials.appName;
+            user = new authModel_1.AuthModel(credentials.name, credentials.password);
+        }
+        else {
+            let _input = cmd.split(' ');
+            user = new authModel_1.AuthModel(_input[1], _input[2]);
+            key = _input[0];
+        }
     }));
     return [key, user];
 }
-// todo create a class for each use case and then do input for each required values
 function selectUseCase(appName, user) {
     inq.prompt({
         type: "list",
         name: "command",
         message: "choose option",
-        choices: Object.values(Commands)
+        choices: Object.values(commands_1.Commands)
     }).then(async (answer) => {
         let context;
         let cmd = answer["command"];
-        if (cmd !== Commands.Quit) {
+        if (cmd !== commands_1.Commands.Quit) {
             switch (cmd) {
-                case Commands.GetEntry:
-                    inq.prompt({
-                        type: "input",
-                        name: "configkey",
-                        message: "enter [configkey] to read"
-                    }).then(answer => {
-                        let key = answer["configkey"];
-                        context = contextModel_1.getEntityContext(key, user, appName);
-                        busSend(context);
-                    });
+                case commands_1.Commands.GetEntry:
+                    entityCrud_1.promptGetEntry(appName, user);
                     break;
-                case Commands.GetAllEntries:
-                    context = contextModel_1.getAllEntitiesContext(user, appName);
-                    busSend(context);
+                case commands_1.Commands.GetAllEntries:
+                    entityCrud_1.promptGetAll(appName, user);
                     break;
-                case Commands.Upload:
-                    context = contextModel_1.uploadFile(user, appName);
-                    busSend(context);
+                case commands_1.Commands.UpdateEntry:
+                    entityCrud_1.updateEntry(appName, user);
                     break;
-                case Commands.Login:
-                    run();
+                case commands_1.Commands.Upload:
+                    entityCrud_1.upload(appName, user);
+                    break;
+                case commands_1.Commands.Login:
+                    main();
                     break;
                 default:
                     break;
@@ -94,4 +67,9 @@ function selectUseCase(appName, user) {
         }
     });
 }
-run().then(loggedInUser => selectUseCase(loggedInUser[0], loggedInUser[1]));
+exports.selectUseCase = selectUseCase;
+main().then(logInResult => {
+    let appName = logInResult[0];
+    let user = logInResult[1];
+    selectUseCase(appName, user);
+});

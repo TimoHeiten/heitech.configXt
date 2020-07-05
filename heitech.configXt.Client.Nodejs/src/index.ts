@@ -1,55 +1,14 @@
 import * as inq from 'inquirer';
-import * as mq from 'zeromq';
-import { 
-    ContextModel,
-    createUserContext, 
-    getEntityContext,
-    getAllEntitiesContext, 
-    uploadFile 
-} from "./contextModel";
-import { UiOperationResult } from "./uiOperationResult";
+import { ContextModel,} from "./contextModel";
 import { AuthModel } from './authModel';
-import { ConfigurationModel } from './configModel';
+import { Commands } from './commands';
+import { updateEntry, promptGetEntry, promptGetAll, upload } from './entityCrud';
+import { readFileSync } from 'fs';
 
-const tcpConnect = "tcp://localhost:5557";
-
+const credentials : any = JSON.parse(readFileSync("./src/config.json", 'utf8'));
 // todo: config file for admin, user and app name
-
-
-function busSend(context : ContextModel){
-    let socket = mq.socket('req');
-    socket.connect(tcpConnect);
-
-    socket.on('message', function(msg){
-        let result = JSON.parse(msg.toString());
-        let uiResult = UiOperationResult.FromMsg(result);
-        console.log(uiResult.format());
-        
-        selectUseCase(context.appName, context.user);
-    });
-
-    socket.send(JSON.stringify(context));
-}
-
-enum Commands{
-    Login = 'Login-As',
-    Quit = "Quit",
-
-    GetEntry = "GetEntry",
-    UpdateEntry = "UpdateEntry",
-    CreateEntry = "CreateEntry",
-    GetAllEntries = "GetAllEntries",
-
-    AddUser = "AddUser",
-    GetUser = "GetUser",
-    UpdateUser = "UpdateUser",
-    DeleteUser = "DeleteUser",
-
-    Upload = "upload-data",
-    Download = "download-data"
-}
-
-async function run() : Promise<[string, AuthModel]>{
+// main to run the loop
+async function main() : Promise<[string, AuthModel]>{
      console.clear();
      let user : AuthModel;
      let key : string;
@@ -59,17 +18,22 @@ async function run() : Promise<[string, AuthModel]>{
         message : "input User: [appName] [userName] [password]"
     }).then(answer => {
         let cmd : string = answer['add'];
-        let _input = cmd.split(' ');
-        user = new AuthModel(_input[1], _input[2]);
-        key = _input[0];
-        return user;
+        if (cmd === '')
+        {
+            key = credentials.appName;
+            user = new AuthModel(<string> credentials.name, <string> credentials.password);
+        }
+        else{
+            let _input = cmd.split(' ');
+            user = new AuthModel(_input[1], _input[2]);
+            key = _input[0];
+        }
     }));
 
     return [key, user];
 }
 
-// todo create a class for each use case and then do input for each required values
-function selectUseCase(appName: string, user: AuthModel) : void{
+export function selectUseCase(appName: string, user: AuthModel) : void{
         inq.prompt({
             type: "list",
             name: "command",
@@ -82,26 +46,19 @@ function selectUseCase(appName: string, user: AuthModel) : void{
             {
                 switch (cmd) {
                     case Commands.GetEntry:
-                        inq.prompt({
-                            type: "input",
-                            name: "configkey",
-                            message : "enter [configkey] to read"
-                        }).then(answer => {
-                            let key : string = answer["configkey"];
-                            context = getEntityContext(key, user, appName);
-                            busSend(context);
-                        });
+                        promptGetEntry(appName, user);
                         break;
                     case Commands.GetAllEntries:
-                        context = getAllEntitiesContext(user, appName);
-                        busSend(context);
+                        promptGetAll(appName, user);
+                        break;
+                    case Commands.UpdateEntry:
+                        updateEntry(appName, user);
                         break;
                     case Commands.Upload:
-                        context = uploadFile(user, appName);
-                        busSend(context);
+                        upload(appName, user);
                         break;
                     case Commands.Login:
-                        run();
+                        main();
                         break;
                     default:
                         break;
@@ -115,4 +72,8 @@ function selectUseCase(appName: string, user: AuthModel) : void{
         });
 }
 
-run().then(loggedInUser => selectUseCase(loggedInUser[0], loggedInUser[1]));
+main().then(logInResult => {
+    let appName = logInResult[0];
+    let user = logInResult[1];
+    selectUseCase(appName, user);
+});

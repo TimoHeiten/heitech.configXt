@@ -27,7 +27,7 @@ export function createUserContext(user:string, password:string, entity:string, a
     return model;
 }
 
-function getUserContext() : ContextModel{
+export function getUserContext() : ContextModel{
     let model = new ContextModel();
     
 
@@ -50,7 +50,7 @@ function updateUserContext() : ContextModel{
 
 // --------------------- context for config entities------------------------------------------------------
 
-function createEntityContext(key : string, value: string, user: AuthModel, appName: string) : ContextModel{
+export function createEntityContext(key : string, value: string, user: AuthModel, appName: string) : ContextModel{
     let model = new ContextModel();
     model.type = ContextType.CreateEntry;
     model.key = key;
@@ -81,7 +81,7 @@ export function getEntityContext(key : string, user: AuthModel, appName: string)
     return model;
 }
 
-function updateEntityContext(key : string, value: string, user: AuthModel, appName: string) : ContextModel{
+export function updateEntityContext(key : string, value: string, user: AuthModel, appName: string) : ContextModel{
     let model = new ContextModel();
     model.type = ContextType.UpdateEntry;
     model.key = key;
