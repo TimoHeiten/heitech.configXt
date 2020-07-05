@@ -58,6 +58,24 @@ namespace heitech.configXt.Application
                 );
             }
 
+            return await RunNoAuth(model);
+        }
+
+        public Task<OperationResult> Upload(string fileItems, string indicator)
+        {
+            indicator = indicator.ToLowerInvariant();
+            switch (indicator)
+            {
+                case "json":
+                    var useCase = new UploadFileAsync(fileItems, new JsonTransform(), _model);
+                    return useCase.RunUseCaseAsync();
+                default:
+                    throw new NotSupportedException($"indicator: {indicator} is not yet supported");
+            }
+        }
+
+        public async Task<OperationResult> RunNoAuth(ContextModel model)
+        {
             ConfigurationContext ctxt;
             switch (model.Type)
             {
@@ -99,19 +117,6 @@ namespace heitech.configXt.Application
                     return await Factory.RunOperationAsync(ctxt);
                 default:
                     throw new NotSupportedException($"model.contextType : [{model.Type.ToString()}] is not supported");
-            }
-        }
-
-        public Task<OperationResult> Upload(string fileItems, string indicator)
-        {
-            indicator = indicator.ToLowerInvariant();
-            switch (indicator)
-            {
-                case "json":
-                    var useCase = new UploadFileAsync(fileItems, new JsonTransform(), _model);
-                    return useCase.RunUseCaseAsync();
-                default:
-                    throw new NotSupportedException($"indicator: {indicator} is not yet supported");
             }
         }
     }

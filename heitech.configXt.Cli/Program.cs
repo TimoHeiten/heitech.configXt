@@ -31,7 +31,11 @@ namespace heitech.configXt.Cli
                         async (model) => 
                         {
                             Log($"incoming model:\nUserName:[{model.User?.Name}]\nType:[{model.Type}]\nKey:[{model.Key}]\nValue:[{model.Value}]\nAppName:[{model.AppName}]");
-                            OperationResult result = await _interact.Run(model);
+                            OperationResult result;
+                            if (config.Auth)
+                                result = await _interact.Run(model);
+                            else
+                                result = await _interact.RunNoAuth(model);
                             Log($"result is:\nresult.Success[{result.IsSuccess}]\nresult.Type[{result.ResultType}]");
 
                             return result;

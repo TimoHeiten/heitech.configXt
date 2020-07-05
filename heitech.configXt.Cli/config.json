@@ -2,5 +2,6 @@
     "ZeroMQTcp" : "tcp://localhost:5557",
     "AdminName" : "timoh",
     "AdminPassword" : "admin123",
-    "InitialAppName" : "test-app-1"
+    "InitialAppName" : "test-app-1",
+    "Auth" : true
 }

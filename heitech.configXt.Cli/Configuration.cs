@@ -10,6 +10,8 @@ namespace heitech.configXt.Cli
         public const string INTERACT_DEFAULT = "Memory";
         public const string STORAGE_DEFAULT = "Memory";
 
+        public bool Auth { get; set; }
+
         public string AdminPassword { get; set; }
         public string AdminName { get; set; }
         public string InitialAppName { get; set; }
