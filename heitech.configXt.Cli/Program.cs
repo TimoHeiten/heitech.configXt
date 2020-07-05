@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using heitech.configXt.Application;
+using heitech.configXt.Core;
 using heitech.configXt.Models;
 using Newtonsoft.Json;
 
@@ -13,14 +14,11 @@ namespace heitech.configXt.Cli
         static IInteract _interact;
         static async Task Main(string[] args)
         {
-            // yes the irony of a config file inside said config service
-            // is apparent to the author...
-            // maybe use in memory config service here.
             System.Console.WriteLine("Starting to connect");
             _log = args.Contains("log") || args.Contains("l");
-            // todo run in memory config for this service too
             var config = Configuration.Parse();
             var bus = new ResponseBus(config.ZeroMQTcp);
+
             using (bus)
             {
                 bus.Connect();
@@ -35,28 +33,36 @@ namespace heitech.configXt.Cli
 
         private static IInteract InteractFromConfig(Configuration config)
         {
-            InMemoryStore store = StorageFromConfig(config);
-            return new MemoryInteract(store, store);
+            var (store, authStore) = StorageFromConfig(config);
+            return new MemoryInteract(store, authStore);
         }
-        private static InMemoryStore StorageFromConfig(Configuration configuration)
+
+        private static (IStorageModel, IAuthStorageModel) StorageFromConfig(Configuration configuration)
         {
-            return new InMemoryStore
+            if (configuration.StorageModel.Equals("persistent", StringComparison.InvariantCultureIgnoreCase))
+            {
+                Log("using ef store with sqlite and location:  " + configuration.StorageLocation);
+                var persist = new EfStore(configuration.StorageLocation);
+                return (persist, persist);
+            }
+
+            Log("using in memory store!");
+            // default
+            var store = new InMemoryStore
             (
                 configuration.AdminName, 
                 configuration.AdminPassword, 
-                configuration.InitialAppName)
-            ;
+                configuration.InitialAppName
+            );
+
+            return (store, store);
         }
 
         private static void Log(object o)
         {
-            if (_log)
-                System.Console.WriteLine(o);
+            if (_log) System.Console.WriteLine(o);
         }
 
-        private ContextModel Parse(string json)
-        {
-            return JsonConvert.DeserializeObject<ContextModel>(json);
-        }
+        private ContextModel Parse(string json) =>  JsonConvert.DeserializeObject<ContextModel>(json);
     }
 }

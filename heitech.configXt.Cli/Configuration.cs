@@ -38,5 +38,6 @@ namespace heitech.configXt.Cli
 
         public string InteractType { get; set; }
         public string StorageModel { get; set; }
+        public string StorageLocation { get; set; }
     }
 }
