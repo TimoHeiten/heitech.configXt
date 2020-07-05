@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using heitech.configXt.Models;
 
 namespace heitech.configXt.Core.Entities
@@ -6,11 +8,31 @@ namespace heitech.configXt.Core.Entities
     public class ApplicationClaim
     {
         public Guid Id { get; set; }
+        ///<summary>
+        /// Corresponds to the applicationName
+        ///</summary>
         public string Name { get; set; }
+        ///<summary>
+        /// Allows for Read
+        ///</summary>
         public bool CanRead { get; set; }
+
+        ///<summary>
+        /// Allows for write
+        ///</summary>
         public bool CanWrite { get; set; }
+
+        ///<summary>
+        /// The Associated ConfigEntities
+        ///</summary>
         public ConfigEntity ConfigEntity { get; set; }
-        public string ConfigEntityName { get; set; }
+        private string _configName;
+        public string ConfigEntityName 
+        {
+            get => ConfigEntity != null ? ConfigEntity.Name : _configName;
+            set => _configName = value;
+        }
+        public UserEntity User { get; set; }
 
         public static ApplicationClaim MapFromAppClaimModel(AppClaimModel model)
         {
@@ -20,7 +42,7 @@ namespace heitech.configXt.Core.Entities
                 CanRead = model.CanRead,
                 CanWrite = model.CanWrite,
                 Name = model.ApplicationName,
-                ConfigEntityName = model.ConfigEntitiyKey
+                _configName = model.ConfigEntitiyKey
             };
         }
     }

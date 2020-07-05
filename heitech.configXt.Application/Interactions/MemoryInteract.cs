@@ -23,15 +23,20 @@ namespace heitech.configXt.Application
             throw new NotSupportedException("download is not supported yet");
         }
 
+        private bool IsUserInteraction(ContextModel model)
+        {
+            return model.Type == ContextType.AddUser 
+               || model.Type == ContextType.DeleteUser 
+               || model.Type == ContextType.UpdateUser
+               || model.Type == ContextType.GetUser;
+        }
+
         public async Task<OperationResult> Run(ContextModel model)
         {
             // check is allowed
             bool isAllowed = true;
             string access = "write";
-            if (model.Type == ContextType.AddUser 
-               || model.Type == ContextType.DeleteUser 
-               || model.Type == ContextType.UpdateUser
-               || model.Type == ContextType.GetUser)
+            if (IsUserInteraction(model))
             {
                 isAllowed = true;
             }

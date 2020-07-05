@@ -17,8 +17,12 @@ namespace heitech.configXt.TraceBullet
 
         static Program()
         {
+            // in memory
             _map.Add("test-storage", a => TestStorageAndGeneralFlow.Run(a));
             _map.Add("usage", a => UsingApplication.Run(a));
+            _map.Add("ef-store", a => StorePersistent.Run(a));
+
+            // need running cli & comm to work
             _map.Add("cli", a => InteractCli.Run(a));
             _map.Add("users", a => TestUsers.Run(a));
         }

@@ -9,6 +9,7 @@ namespace heitech.configXt.Core.Entities
         public string Name { get; set; }
         public string Value { get; set; }
         public ApplicationClaim AppClaim { get; set; }
+        public Guid ApplicationClaimId { get; set; }
         public CommandTypes CrudOperationName { get; internal set; }
     }
 }
