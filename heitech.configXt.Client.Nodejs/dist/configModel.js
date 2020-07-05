@@ -2,9 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ConfigurationModel = void 0;
 class ConfigurationModel {
-    constructor(name, value) {
-        this.name = name;
-        this.value = value;
+    constructor(Name, Value) {
+        this.Name = Name;
+        this.Value = Value;
     }
 }
 exports.ConfigurationModel = ConfigurationModel;

@@ -3,14 +3,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const inq = require("inquirer");
 const mq = require("zeromq");
 const contextModel_1 = require("./contextModel");
+const uiOperationResult_1 = require("./uiOperationResult");
 const authModel_1 = require("./authModel");
 const tcpConnect = "tcp://localhost:5557";
+// todo: config file for admin, user and app name
 function busSend(context) {
     let socket = mq.socket('req');
     socket.connect(tcpConnect);
     socket.on('message', function (msg) {
-        let uiResult = JSON.parse(msg.toString());
-        // let uiResult = UiOperationResult.FromMsg(result);
+        let result = JSON.parse(msg.toString());
+        let uiResult = uiOperationResult_1.UiOperationResult.FromMsg(result);
         console.log(uiResult.format());
         selectUseCase(context.appName, context.user);
     });

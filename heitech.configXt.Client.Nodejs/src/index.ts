@@ -9,17 +9,23 @@ import {
 } from "./contextModel";
 import { UiOperationResult } from "./uiOperationResult";
 import { AuthModel } from './authModel';
+import { ConfigurationModel } from './configModel';
 
 const tcpConnect = "tcp://localhost:5557";
+
+// todo: config file for admin, user and app name
+
 
 function busSend(context : ContextModel){
     let socket = mq.socket('req');
     socket.connect(tcpConnect);
 
     socket.on('message', function(msg){
-        console.log('got' + msg.toString());
+        let result = JSON.parse(msg.toString());
+        let uiResult = UiOperationResult.FromMsg(result);
+        console.log(uiResult.format());
         
-        selectUseCase(context.user);
+        selectUseCase(context.appName, context.user);
     });
 
     socket.send(JSON.stringify(context));
@@ -43,28 +49,27 @@ enum Commands{
     Download = "download-data"
 }
 
-async function run() : Promise<AuthModel>{
+async function run() : Promise<[string, AuthModel]>{
      console.clear();
      let user : AuthModel;
+     let key : string;
      (await inq.prompt({
         type: "input",
         name : "add",
-        message : "input User: [userName] [password]"
+        message : "input User: [appName] [userName] [password]"
     }).then(answer => {
         let cmd : string = answer['add'];
         let _input = cmd.split(' ');
-        user = new AuthModel(_input[0], _input[1]);
+        user = new AuthModel(_input[1], _input[2]);
+        key = _input[0];
         return user;
     }));
 
-    return user;
+    return [key, user];
 }
 
-// todo hard coded const appName (extend authmodel for appname)
-const appName : string = "test-app-1";
-
 // todo create a class for each use case and then do input for each required values
-function selectUseCase(user: AuthModel) : void{
+function selectUseCase(appName: string, user: AuthModel) : void{
         inq.prompt({
             type: "list",
             name: "command",
@@ -110,4 +115,4 @@ function selectUseCase(user: AuthModel) : void{
         });
 }
 
-run().then(authModel => selectUseCase(authModel));
+run().then(loggedInUser => selectUseCase(loggedInUser[0], loggedInUser[1]));

@@ -2,7 +2,10 @@
     "compilerOptions": {
         "target": "es2018",
         "outDir": "./dist",
-        "rootDir": "./",
-        "module": "commonjs"
+        "rootDir": "./src",
+        "module": "commonjs",
+        "noEmitOnError": true,
+        "declaration": true,
+        "noImplicitAny": true
     }
 }
