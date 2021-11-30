@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30114.105
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "heitech.configXt", "heitech.configXt\heitech.configXt.csproj", "{044015A4-439A-4F86-AA6C-F42FE6BE22FF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "terminal", "terminal\terminal.csproj", "{1F83CB3A-1C2A-4123-B053-76A95477BE6E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "tests", "tests\tests.csproj", "{2F61DEE3-9C60-4D90-B8D0-2FFB004898BC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{044015A4-439A-4F86-AA6C-F42FE6BE22FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{044015A4-439A-4F86-AA6C-F42FE6BE22FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{044015A4-439A-4F86-AA6C-F42FE6BE22FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{044015A4-439A-4F86-AA6C-F42FE6BE22FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1F83CB3A-1C2A-4123-B053-76A95477BE6E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1F83CB3A-1C2A-4123-B053-76A95477BE6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1F83CB3A-1C2A-4123-B053-76A95477BE6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1F83CB3A-1C2A-4123-B053-76A95477BE6E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2F61DEE3-9C60-4D90-B8D0-2FFB004898BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F61DEE3-9C60-4D90-B8D0-2FFB004898BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F61DEE3-9C60-4D90-B8D0-2FFB004898BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F61DEE3-9C60-4D90-B8D0-2FFB004898BC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
