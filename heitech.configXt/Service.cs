@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace heitech.configXt
@@ -16,10 +17,7 @@ namespace heitech.configXt
         }
 
         internal void Initialize(Dictionary<string, ConfigModel> map)
-        {
-            foreach (var item in map)
-                _inMemoryMap.Add(item.Key, item.Value);
-        }
+            => map.ToList().ForEach(x => _inMemoryMap.Add(x.Key, x.Value));
 
         public Task<ConfigResult> CreateAsync(ConfigModel model)
             => Build(

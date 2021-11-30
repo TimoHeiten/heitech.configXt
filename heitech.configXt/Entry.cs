@@ -18,5 +18,8 @@ namespace heitech.configXt
 
             return service;
         }
+
+        public static IService CreateService(IStore store)
+            =>  new Service(store);
     }
 }
