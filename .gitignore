@@ -11,3 +11,6 @@ heitech.configXt.Client.Nodejs/node_modules
 **/node_modules
 *node_modules 
 heitech.configXt.Client.Nodejs/dist/
+
+heitech.configXt.api/configStore.db
+heitech.configXt.api/map.json

@@ -10,8 +10,10 @@ namespace heitech.configXt
         public string Key { get; private set; }
         public object Value { get; private set; }
 
-        private ConfigModel()
-        { }
+        public ConfigModel()
+        { 
+            
+        }
 
         ///<summary>
         /// If the captured Value is of type T you can extract it with the out parameter

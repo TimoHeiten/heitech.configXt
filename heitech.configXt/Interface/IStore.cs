@@ -8,6 +8,8 @@ namespace heitech.configXt
     ///</summary>
     public interface IStore
     {
-        Task FlushAsync(Dictionary<string, ConfigModel> map);
+        Task FlushAsync();
+
+        Task<Dictionary<string, ConfigModel>> GetAll();
     }
 }
