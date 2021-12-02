@@ -15,9 +15,8 @@ namespace heitech.configXt
     ///</summary>
     public abstract class ConfigurationException : Exception
     {
-        public ConfigurationException(ConfigModel model) : base()
+        public ConfigurationException(ConfigModel model) : base($"{model?.Key} - {model?.Value}")
         {
-
         }
 
         public static ConfigurationException Create(Crud operation, ConfigModel model)

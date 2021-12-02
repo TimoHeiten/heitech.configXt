@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "terminal", "terminal\termin
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "tests", "tests\tests.csproj", "{2F61DEE3-9C60-4D90-B8D0-2FFB004898BC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "heitech.configXt.api", "heitech.configXt.api\heitech.configXt.api.csproj", "{CD8C22DE-4EF0-4AAF-ABCA-91FDAB1ACA0C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{2F61DEE3-9C60-4D90-B8D0-2FFB004898BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2F61DEE3-9C60-4D90-B8D0-2FFB004898BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2F61DEE3-9C60-4D90-B8D0-2FFB004898BC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CD8C22DE-4EF0-4AAF-ABCA-91FDAB1ACA0C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CD8C22DE-4EF0-4AAF-ABCA-91FDAB1ACA0C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CD8C22DE-4EF0-4AAF-ABCA-91FDAB1ACA0C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CD8C22DE-4EF0-4AAF-ABCA-91FDAB1ACA0C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

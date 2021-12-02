@@ -1,7 +1,5 @@
 using System;
-using System.Collections.Generic;
 using FluentAssertions;
-using NSubstitute;
 using Xunit;
 
 namespace heitech.configXt.tests
@@ -24,7 +22,7 @@ namespace heitech.configXt.tests
                     ConfigurationException.Create((Crud)item, model);
                 }
             }
-            catch (System.Exception _)
+            catch
             {
                 noException = false;
             }

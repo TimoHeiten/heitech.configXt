@@ -2,6 +2,8 @@
 using System.IO;
 using System.Threading.Tasks;
 using heitech.configXt;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace terminal
 {
@@ -12,7 +14,15 @@ namespace terminal
             ///<summary>
             /// Test all CRUD Operations and the correct ConfigResults
             ///</summary>
-            var service = await Entry.StartAsync(Environment.CurrentDirectory);
+            var services = new ServiceCollection();
+            services.AddServices("testdb");
+            var provider = services.BuildServiceProvider();
+            using var scope = provider.CreateScope();
+
+            var service = scope.ServiceProvider.GetRequiredService<IService>();
+            var store = scope.ServiceProvider.GetRequiredService<IStore>();
+            if (store is SqliteStore sqlite)
+                await sqlite.Database.MigrateAsync();
 
             // create literal, complex object and collection
             var one = await service.CreateAsync(ConfigModel.From("key", 42));
@@ -70,7 +80,8 @@ namespace terminal
             nonExisting = await service.DeleteAsync("none");
             writeNonExisting(nonExisting, "delete");
 
-            await Task.Run(() => File.Delete(Path.Combine(Environment.CurrentDirectory, "map.json")));
+            if (store is SqliteStore sqliteStore)
+                await sqliteStore.Database.EnsureDeletedAsync();
         }
 
         public class Item

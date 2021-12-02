@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentAssertions;
 using NSubstitute;
@@ -14,12 +13,14 @@ namespace heitech.configXt.tests
         private readonly IService _sut;
         private readonly IStore _store;
         private readonly ConfigModel _model1;
+        private readonly IRepository _repository;
 
         public ServiceTests()
         {
             _model1 = ConfigModel.From(KEY, "value");
             _store = Substitute.For<IStore>();
-            _sut = Entry.CreateService(_store);
+            _repository = Substitute.For<IRepository>();
+            _sut = new DbService(_store, _repository);
         }
 
         #region Create Tests
@@ -31,66 +32,34 @@ namespace heitech.configXt.tests
 
             // Assert
             result.IsSuccess.Should().BeTrue();
+            _repository.Received().Add(Arg.Is<ConfigModel>(x => x.Value == _model1.Value));
+            await _store.Received().FlushAsync();
         }
 
         [Fact]
-        public async Task CreateAsync_adds_calls_Flush()
-        {
-            // Act
-            var result = await _sut.CreateAsync(_model1);
-
-            // Assert
-            await _store.Received(1).FlushAsync(
-                Arg.Is<Dictionary<string, ConfigModel>>(d => d.ContainsKey(KEY))
-            );
-        }
-
-        [Fact]
-        public async Task CreateWithSameKeyTwice_ReturnsFailure()
+        public async Task Create_Repository_throws_Returns_Failure()
         {
             // Arrange
-            _ = await _sut.CreateAsync(_model1);
+            _repository.When(x => x.Add(Arg.Any<ConfigModel>())).Do(x => throw new Exception());
 
             // Act
             var result = await _sut.CreateAsync(_model1);
-
+            
             // Assert
             result.IsSuccess.Should().BeFalse();
-            result.Exception.GetType().Name.Should().Be("CreateException");
-        }
-
-        [Fact]
-        public async Task Create_Actually_puts_a_new_item()
-        {
-            // Act
-            var result = await _sut.CreateAsync(_model1);
-            var retrieved = await _sut.RetrieveAsync(_model1.Key);
-
-            // Assert
-            result.IsSuccess.Should().BeTrue();
-            _ = result.TryGetAs(out string actual);
-            actual.Should().Be("value");
-
-            retrieved.IsSuccess.Should().BeTrue();
-            retrieved.TryGetAs(out actual);
-            actual.Should().Be("value");
 
         }
         #endregion
 
 
         #region Retrieve
-        private async Task ArrangeExistingItem()
-        {
-            await _sut.CreateAsync(_model1);
-            _store.ClearReceivedCalls();
-        }
+        private void ArrangeExistingItem() => _repository.Get("key").Returns(_model1);
 
         [Fact]
         public async Task Retrieve_not_Existing_returns_false()
         {
             // Arrange
-            // nothing
+            ArrangeExistingItem();
 
             // Act
             var result = await _sut.RetrieveAsync("no-key");
@@ -104,7 +73,7 @@ namespace heitech.configXt.tests
         public async Task Retrieve_existing_returns_true()
         {
             // Arrange
-            await ArrangeExistingItem();
+            ArrangeExistingItem();
 
             // Act
             var result = await _sut.RetrieveAsync(KEY);
@@ -119,13 +88,13 @@ namespace heitech.configXt.tests
         public async Task Retrieve_does_not_call_Flush(string key)
         {
             // Arrange
-            await ArrangeExistingItem();
+            ArrangeExistingItem();
 
             // Act
             _ = await _sut.RetrieveAsync(key);
 
             // Assert
-            await _store.DidNotReceive().FlushAsync(Arg.Any<Dictionary<string, ConfigModel>>());
+            await _store.DidNotReceive().FlushAsync();
         }
         #endregion
 
@@ -134,36 +103,34 @@ namespace heitech.configXt.tests
         public async Task Update_on_existing_item_returns_success_Result()
         {
             // Arrange
-            await ArrangeExistingItem();
+            ArrangeExistingItem();
             var model = ConfigModel.From(KEY, "value");
+            _repository.UpdateAsync(Arg.Is<ConfigModel>(x => x.Key == KEY))
+                       .Returns(ConfigModel.From(KEY, "updated"));
 
             // Act
             var result = await _sut.UpdateAsync(model);
 
             // Assert
             result.IsSuccess.Should().BeTrue();
-            await _store.Received().FlushAsync(Arg.Any<Dictionary<string, ConfigModel>>());
+            result.Result.Value.Should().Be("updated");
+            await _store.Received().FlushAsync();
         }
 
         [Fact]
-        public Task Update_on_non_existing_item_returns_failed_Result()
-            => RunMutationWithoutExistingKey(() => _sut.UpdateAsync(ConfigModel.From(KEY, "value")), "UpdateException");
-
-        [Fact]
-        public async Task Update_Actually_Updates()
+        public async Task Update_Throws_returns_FailureResult()
         {
             // Arrange
-            await ArrangeExistingItem();
+            ArrangeExistingItem();
             var model = ConfigModel.From(KEY, "updated");
-            _store.ClearReceivedCalls();
+            _repository.UpdateAsync(Arg.Any<ConfigModel>()).Returns(x => { throw new Exception(); return Task.CompletedTask; });
 
             // Act
             var result = await _sut.UpdateAsync(model);
 
             // Assert
-            result.IsSuccess.Should().BeTrue();
-            _ = result.TryGetAs(out string actual);
-            actual.Should().Be("updated");
+            result.IsSuccess.Should().BeFalse();
+            result.Exception.GetType().Name.Should().Be("Exception");
         }
         #endregion
 
@@ -172,35 +139,46 @@ namespace heitech.configXt.tests
         public async Task Delete_on_existing_item_returns_success_Result()
         {
             // Arrange
-            await ArrangeExistingItem();
             var model = ConfigModel.From(KEY, "value");
-            _store.ClearReceivedCalls();
+            _repository.DeleteAsync(KEY).Returns(model);
 
             // Act
             var result = await _sut.DeleteAsync(KEY);
 
             // Assert
             result.IsSuccess.Should().BeTrue();
-            await _store.Received().FlushAsync(Arg.Any<Dictionary<string, ConfigModel>>());
+            await _store.Received().FlushAsync();
         }
 
         [Fact]
-        public Task Delete_on_non_existing_item_returns_failed_Result()
-            => RunMutationWithoutExistingKey(() => _sut.DeleteAsync(KEY), "DeleteException");
-
-        [Fact]
-        public async Task Delete_success_and_retrieve_then_fails()
+        public async Task Delete_returns_null_leads_to_failure()
         {
-            // Arrange
-            await ArrangeExistingItem();
-            _store.ClearReceivedCalls();
-            _ = _sut.DeleteAsync(KEY);
+             // Arrange
+            var model = ConfigModel.From(KEY, "value");
+            _repository.DeleteAsync(KEY).Returns((ConfigModel)null);
 
             // Act
-            var retrieveResult = await _sut.RetrieveAsync(KEY);
+            var result = await _sut.DeleteAsync(KEY);
 
             // Assert
-            retrieveResult.IsSuccess.Should().BeFalse();
+            result.IsSuccess.Should().BeFalse();
+            await _store.DidNotReceive().FlushAsync();
+        }
+
+        [Fact]
+        public async Task Delete_Throws_returns_FailureResult()
+        {
+            // Arrange
+            ArrangeExistingItem();
+            var model = ConfigModel.From(KEY, "updated");
+            _repository.DeleteAsync(KEY).Returns(x => { throw new Exception(); return Task.CompletedTask; });
+
+            // Act
+            var result = await _sut.DeleteAsync(KEY);
+
+            // Assert
+            result.IsSuccess.Should().BeFalse();
+            result.Exception.GetType().Name.Should().Be("Exception");
         }
         #endregion
 
@@ -208,13 +186,14 @@ namespace heitech.configXt.tests
         private async Task RunMutationWithoutExistingKey(Func<Task<ConfigResult>> callback, string excName)
         {
             // Arrange
+
             // Act
             var result = await callback();
 
             // Assert
             result.IsSuccess.Should().BeFalse();
             result.Exception.GetType().Name.Should().Be(excName);
-            await _store.DidNotReceive().FlushAsync(Arg.Any<Dictionary<string, ConfigModel>>());
+            await _store.DidNotReceive().FlushAsync();
         }
     }
 }
