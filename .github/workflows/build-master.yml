@@ -22,4 +22,4 @@ jobs:
     - name: Build
       run: dotnet build --no-restore ./heitech.configXt/heitech.configXt.csproj
     - name: Test
-      run: dotnet test --verbosity normal ./heitech.configXt/tests/tests.csproj
+      run: dotnet test --verbosity normal ./tests/tests.csproj
