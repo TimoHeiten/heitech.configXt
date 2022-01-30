@@ -1,0 +1,21 @@
+﻿<Router AppAssembly="@typeof(App).Assembly">
+    <Found Context="routeData">
+        <RouteView RouteData="@routeData" DefaultLayout="@typeof(_Layout)" />
+        <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+    </Found>
+    <NotFound>
+        <div class="content">
+            <h1 class="row justify-content-md-center">404 - Dead Link not awakening</h1>
+            <a href="/" >
+                <div class="container">
+                    <div class="row justify-content-md-center">
+                        <img src="/imgs/404.png" href/>
+                    </div>
+                    <div class="row justify-content-md-center">
+                        <p>Kehre zur Startseite zurück.</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </NotFound>
+</Router>

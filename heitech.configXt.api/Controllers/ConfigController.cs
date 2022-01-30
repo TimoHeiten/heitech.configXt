@@ -9,6 +9,7 @@ public class ConfigController : ControllerBase
     private readonly IService _service;
     private readonly IStore _store;
     private readonly ILogger<ConfigController> _logger;
+
     public ConfigController(ILogger<ConfigController> logger, IService service, IStore store)
     {
         _store = store;
