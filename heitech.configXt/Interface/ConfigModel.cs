@@ -10,6 +10,7 @@ namespace heitech.configXt
     ///</summary>
     public class ConfigModel
     {
+        private readonly Type initialType;
         public string Key { get; private set; }
         ///<summary>
         /// the actual object as json string
@@ -17,9 +18,6 @@ namespace heitech.configXt
         public string Value { get; private set; } // json string
         public ConfigKind Kind { get; }
 
-        ///<summary>
-        /// Expects
-        ///</summary>
         private ConfigModel(string key, object value)
         { 
             Key = key;
@@ -30,6 +28,8 @@ namespace heitech.configXt
                     : token.ToString(Formatting.None);
             if (!success)
                 Value = "{}";
+
+            initialType = value.GetType();
         }
 
         private static ConfigKind DetermineKind(bool success, JToken token)
@@ -42,22 +42,6 @@ namespace heitech.configXt
             else if (token is JValue) return ConfigKind.Literal;
 
             throw new NotSupportedException();
-        }
-
-        ///<summary>
-        /// If the captured Value is of type T you can extract it with the out parameter
-        ///</summary>
-        public bool TryGetAs<T>(out T t)
-        {
-            bool success = false;
-            t = default;
-            object obj = Newtonsoft.Json.JsonConvert.DeserializeObject<T>(Value);
-            if (obj.GetType() == typeof(T))
-            {
-                t = (T)obj;
-                success = true;
-            }
-            return success;
         }
 
         public static bool IsValidJson(object obj)

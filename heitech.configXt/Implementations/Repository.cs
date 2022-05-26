@@ -15,7 +15,8 @@ namespace heitech.configXt
             _table = _store.Set<ConfigModelEntity>();
         }
 
-        public void Add(ConfigModel model) => _table.Add(ConfigModelEntity.FromModel(model));
+        public void Add(ConfigModel model)
+           => _table.Add(ConfigModelEntity.FromModel(model));
 
 
         public async Task<ConfigModel> DeleteAsync(string key)
@@ -25,9 +26,9 @@ namespace heitech.configXt
                 _table.Remove(item);
 
             return item?.ToConfigModel();
-        } 
+        }
 
-        public async Task<ConfigModel> Get(string id) 
+        public async Task<ConfigModel> Get(string id)
         {
             var entity = await get(id);
             return entity?.ToConfigModel();
@@ -46,5 +47,8 @@ namespace heitech.configXt
             }
             return item?.ToConfigModel();
         }
+
+        public Task<bool> Exists(string id)
+            => _table.AnyAsync(x => x.Id == id);
     }
 }

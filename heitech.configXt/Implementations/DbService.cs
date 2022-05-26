@@ -23,29 +23,28 @@ namespace heitech.configXt
         }
 
         public Task<ConfigResult> CreateAsync(ConfigModel model)
-            => DoAsync(() => { _repository.Add(model); return Task.FromResult(model); }, model);
+            => DoAsync(async () =>
+            {
+                bool exists = await _repository.Exists(model.Key);
+                if (!exists) _repository.Add(model); ;
+                return model;
+            }, model);
 
         public Task<ConfigResult> UpdateAsync(ConfigModel model)
-        => DoAsync(() => _repository.UpdateAsync(model), model);
+            => DoAsync(() => _repository.UpdateAsync(model), model);
 
         public Task<ConfigResult> DeleteAsync(string key)
             => DoAsync(() => _repository.DeleteAsync(key), ConfigModel.PlaceHolder(key));
-
 
         private async Task<ConfigResult> DoAsync(Func<Task<ConfigModel>> callback, ConfigModel input)
         {
             try
             {
                 var model = await callback();
-                if (model is null)
-                {
-                    return ConfigResult.Failure(ConfigurationException.Create(Crud.Delete, input));
-                }
-                else
-                {
-                    await _store.FlushAsync();
-                    return ConfigResult.Success(model);
-                }
+                if (model is null) return ConfigResult.Failure(ConfigurationException.Create(Crud.Delete, input));
+
+                await _store.FlushAsync();
+                return ConfigResult.Success(model);
             }
             catch (System.Exception ex)
             {

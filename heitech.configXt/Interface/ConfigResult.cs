@@ -17,12 +17,6 @@ namespace heitech.configXt
         private ConfigResult(Exception exception)
             => Exception = exception;
 
-        public bool TryGetAs<T>(out T t)
-        {
-            t = default;
-            return IsSuccess ?  Result.TryGetAs<T>(out t) : false;
-        }
-
         public static ConfigResult Success(ConfigModel model) => new ConfigResult(model);
         public static ConfigResult Failure(Exception e) => new ConfigResult(e);
     }
