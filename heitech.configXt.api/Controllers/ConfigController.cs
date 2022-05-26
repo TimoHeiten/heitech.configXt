@@ -21,8 +21,6 @@ public class ConfigController : ControllerBase
     public async Task<IActionResult> Get(string key)
     {
         ConfigResult result = await _service.RetrieveAsync(key);
-        if (result.IsSuccess == false) System.Console.WriteLine(result.Exception);
-
         return result.ToActionResult(new { Key = key });
     }
 
@@ -33,7 +31,7 @@ public class ConfigController : ControllerBase
         if (!isValid)
             return BadRequest(new { error = $"input '{input.Value}' must be valid json" });
 
-        var model = ConfigModel.From(input!.Key, input!.Value);
+        var model = ConfigModel.From(key, input!.Value);
 
         var retrieved = await _service.RetrieveAsync(key);
         var result = retrieved.IsSuccess

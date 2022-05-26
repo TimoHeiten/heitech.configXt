@@ -101,8 +101,8 @@ namespace heitech.configXt
 
         public object ToOutput() => new {
             Key,
-            Value,
-            Kind
+            Value = JsonConvert.DeserializeObject(Value),
+            Kind = $"{Kind}"
         };
     }
 }
