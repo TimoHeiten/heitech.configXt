@@ -10,6 +10,6 @@ namespace heitech.configXt
     {
         Task FlushAsync();
 
-        Task<Dictionary<string, ConfigModel>> GetAll();
+        Task<IReadOnlyList<ConfigModel>> GetAll();
     }
 }

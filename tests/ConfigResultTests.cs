@@ -77,5 +77,29 @@ namespace heitech.configXt.tests
             i.Should().Be(0);
             noTypeOnError.Should().BeFalse();
         }
+
+        [Fact]
+        public void TryGet_WithObject()
+        {
+            // Arrange
+            var stub = new ConfigItemStub();
+            var model = ConfigModel.From(stub.Key, stub);
+
+            // Act
+            bool isStub = model.TryGetAs<ConfigItemStub>(out ConfigItemStub s);
+
+            // Assert
+            isStub.Should().BeTrue();
+            s._42.Should().Be(42);
+            s.Key.Should().Be("key");
+            model.Kind.Should().Be(Interface.ConfigKind.Object);
+        }
+
+
+        private class ConfigItemStub
+        {
+            public int _42 { get; set; } = 42;
+            public string Key { get; set; } = "key";
+        }
     }
 }

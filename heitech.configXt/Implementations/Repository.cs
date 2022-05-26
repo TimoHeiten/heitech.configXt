@@ -40,8 +40,10 @@ namespace heitech.configXt
         {
             var item = await get(model.Key);
             if (item != null)
-                item.SetStringFromModel(model);
-
+            {
+                item.Id = model.Key;
+                item.Value = model.Value;
+            }
             return item?.ToConfigModel();
         }
     }

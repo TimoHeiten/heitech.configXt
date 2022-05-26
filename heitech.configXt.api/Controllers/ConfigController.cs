@@ -1,3 +1,4 @@
+using heitech.configXt.api.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace heitech.configXt.api.Controllers;
@@ -26,16 +27,21 @@ public class ConfigController : ControllerBase
     }
 
     [HttpPut("{key}")]
-    public async Task<IActionResult> Post(string key, [FromBody] object value)
+    public async Task<IActionResult> Post(string key, [FromBody] UpsertModel input)
     {
-        var model = ConfigModel.From(key, value);
+        bool isValid = ConfigModel.IsValidJson(input!.Value);
+        if (!isValid)
+            return BadRequest(new { error = $"input '{input.Value}' must be valid json" });
+
+        var model = ConfigModel.From(input!.Key, input!.Value);
+
         var retrieved = await _service.RetrieveAsync(key);
         var result = retrieved.IsSuccess
                      ? await _service.UpdateAsync(model)
                      : await _service.CreateAsync(model);
 
         string operation = retrieved.IsSuccess ? "updated" : "created";
-        return result.ToActionResult(new { Key = key, Value = value, Operation = operation });
+        return result.ToActionResult(new { Key = key, Value = model, Operation = operation });
     }
 
     [HttpDelete("{key}")]
@@ -50,32 +56,6 @@ public class ConfigController : ControllerBase
     public async Task<IActionResult> All()
     {
         var d = await _store.GetAll();
-
-        return Ok(
-            d.Select(x => new
-            {
-                Key = x.Key,
-                Value = x.Value
-            })
-        );
-    }
-}
-
-public static class ControllerExtensions
-{
-    public static IActionResult ToActionResult(this ConfigResult configResult, object input)
-    {
-        if (configResult.IsSuccess)
-        {
-            return new OkObjectResult(configResult.Result);
-        }
-        else
-        {
-            if (configResult.Exception is ConfigurationException cEx)
-                return new BadRequestObjectResult(new { Message = $"Failed with: {cEx.Message}", For = input });
-            else
-                // todo use input etc.
-                return new StatusCodeResult(500);
-        }
+        return Ok(d.Select(x => x.ToOutput()));
     }
 }

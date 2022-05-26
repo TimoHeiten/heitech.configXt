@@ -18,7 +18,7 @@ namespace heitech.configXt
         {
             var result = await _repository.Get(key);
             return result == null
-                   ? ConfigResult.Failure(ConfigurationException.Create(Crud.Retrieve, ConfigModel.From(key, "")))
+                   ? ConfigResult.Failure(ConfigurationException.Create(Crud.Retrieve, ConfigModel.PlaceHolder(key)))
                    : ConfigResult.Success(result);
         }
 
@@ -29,7 +29,7 @@ namespace heitech.configXt
         => DoAsync(() => _repository.UpdateAsync(model), model);
 
         public Task<ConfigResult> DeleteAsync(string key)
-            => DoAsync(() => _repository.DeleteAsync(key), ConfigModel.From(key, ""));
+            => DoAsync(() => _repository.DeleteAsync(key), ConfigModel.PlaceHolder(key));
 
 
         private async Task<ConfigResult> DoAsync(Func<Task<ConfigModel>> callback, ConfigModel input)
